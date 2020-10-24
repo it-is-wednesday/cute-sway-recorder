@@ -1,0 +1,11 @@
+* Cute Wayland Recorder
+
+Hey! This is a screen recorder for Linux desktops running the Wayland display server (such as GNOME
+Wayland and [[https://swaywm.org/][sway]]).
+
+More specifically, this project is merely a graphical [[https://www.qt.io/][Qt]] wrapper for [[https://github.com/ammen99/wf-recorder][wf-recorder]], leveraging [[https://github.com/emersion/slurp][slurp]]
+for selecing screen regions.
+
+** Run
+poetry install
+poetry run cute-wayland-recorder
