@@ -7,5 +7,7 @@ More specifically, this project is merely a graphical [[https://www.qt.io/][Qt]]
 for selecing screen regions.
 
 ** Run
+#+BEGIN_SRC shell
 poetry install
 poetry run cute-wayland-recorder
+#+END_SRC
