@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Application
+Terminal=false
+Exec=HOME/.local/bin/cute-wayland-recorder
+Name=Cute Wayland Recorder
