@@ -8,11 +8,10 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import (
     QApplication,
     QFileDialog,
-    QHBoxLayout,
+    QGridLayout,
     QLabel,
     QMessageBox,
     QPushButton,
@@ -20,6 +19,7 @@ from PySide6.QtWidgets import (
     QSystemTrayIcon,
     QVBoxLayout,
     QWidget,
+    QCheckBox,
 )
 
 FULLSCREEN_SELECTED_TEXT = (
@@ -67,7 +67,7 @@ def make_file_dst() -> str:
     return str(Path(pathstr).expanduser().absolute())
 
 
-def start_recording(area: str, file_dst) -> subprocess.Popen:
+def start_recording(area: str, file_dst, include_audio: bool = False) -> subprocess.Popen:
     """
     Launches a `wf-recorder` process and returns a Popen object representing
     it.
@@ -83,7 +83,10 @@ def start_recording(area: str, file_dst) -> subprocess.Popen:
     else:
         Path(file_dst).parent.mkdir(parents=True, exist_ok=True)
 
-    return subprocess.Popen(["wf-recorder", "--geometry", area, "-f", file_dst])
+    params = ["wf-recorder", "--geometry", area, "-f", file_dst]
+    if include_audio:
+        params.append("-a")
+    return subprocess.Popen(params)
 
 
 class CuteRecorderQtApplication:
@@ -122,15 +125,20 @@ class CuteRecorderQtApplication:
         self.btn_pick_dest = QPushButton("Pick file destination")
         self.btn_pick_dest.clicked.connect(self.btn_onclick_pick_dst)
 
-        self.btns_layout = QHBoxLayout()
-        self.btns_layout.addWidget(self.btn_select_area)
-        self.btns_layout.addWidget(self.btn_select_whole_screen)
-        self.btns_layout.addWidget(self.btn_start_recording)
-        self.btns_layout.addWidget(self.btn_stop_recording)
-        self.btns_layout.addWidget(self.btn_pick_dest)
+        self.checkbox_use_audio = QCheckBox("Record audio")
+
+        self.btns_grid = QGridLayout()
+        self.btns_grid.addWidget(self.btn_select_area, 0, 0)
+        self.btns_grid.addWidget(self.btn_select_whole_screen, 0, 1)
+
+        self.btns_grid.addWidget(self.btn_start_recording, 1, 0)
+        self.btns_grid.addWidget(self.btn_stop_recording, 1, 1)
+
+        self.btns_grid.addWidget(self.btn_pick_dest, 2, 0)
+        self.btns_grid.addWidget(self.checkbox_use_audio, 2, 1)
 
         self.layout = QVBoxLayout()
-        self.layout.addLayout(self.btns_layout)
+        self.layout.addLayout(self.btns_grid)
         self.layout.addWidget(self.lbl_selected_area)
         self.layout.addWidget(self.lbl_file_dst)
         self.layout.addWidget(self.lbl_is_recording)
@@ -190,7 +198,9 @@ class CuteRecorderQtApplication:
             self.window.hide()
             self.icon.show()
 
-        self.recorder_proc = start_recording(self.selected_area, self.file_dst)
+        self.recorder_proc = start_recording(
+            self.selected_area, self.file_dst, include_audio=self.checkbox_use_audio.isChecked()
+        )
         self.lbl_is_recording.setText('<font color="Red">RECORDING</font>')
         self.lbl_file_dst.setText(f"Saving as: {self.file_dst}")
 
