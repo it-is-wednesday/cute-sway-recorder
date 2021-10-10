@@ -1,19 +1,20 @@
 #!/usr/bin/env python3
 #
-import sys
-import subprocess
+import json
 import signal
+import subprocess
+import sys
 from datetime import datetime
 from pathlib import Path
-from PySide6.QtWidgets import (
-    QApplication,
-    QPushButton,
-    QLabel,
-    QWidget,
-    QHBoxLayout,
-    QVBoxLayout,
-    QFileDialog,
-    QMessageBox,
+
+from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import (QApplication, QFileDialog, QHBoxLayout, QLabel,
+                               QMessageBox, QPushButton, QStyle,
+                               QSystemTrayIcon, QVBoxLayout, QWidget)
+
+FULLSCREEN_SELECTED_TEXT = (
+    "Selected area: whole screen. <font color=\"salmon\">this window will be "
+    "minimized. click the tray icon to stop recording</font>"
 )
 
 
@@ -24,6 +25,24 @@ def select_area() -> str:
     """
     cmd = ["slurp", "-f", "%x,%y %wx%h"]
     return subprocess.run(cmd, capture_output=True).stdout.decode().strip()
+
+
+def get_screen_dimensions() -> str:
+    """
+    Get dimensions of currently focused screen via swaymsg. Returns a string in the same format as
+    `select_area()`.
+
+    If no screen if focused (?), raises ValueError
+    """
+    outputs = subprocess.check_output(["swaymsg", "-t", "get_outputs"])
+    outputs = json.loads(outputs)
+
+    for o in outputs:
+        if o["focused"] == True:
+            rect = o["rect"]
+            return f"0,0 {rect['width']}x{rect['height']}"
+
+    raise ValueError("No focused screen found with `swaymsg -t get_outputs`")
 
 
 def make_file_dst() -> str:
@@ -63,6 +82,8 @@ class CuteRecorderQtApplication:
     """
 
     def __init__(self):
+        self.is_whole_screen_selected = False
+
         self.app = QApplication(sys.argv)
         self.app.setApplicationDisplayName("Cute Sway Recorder")
         self.app.setDesktopFileName("cute-sway-recorder")
@@ -79,6 +100,11 @@ class CuteRecorderQtApplication:
         self.btn_select_area = QPushButton("Select an area")
         self.btn_select_area.clicked.connect(self.btn_onclick_select_area)
 
+        self.btn_select_whole_screen = QPushButton("Select whole screen")
+        self.btn_select_whole_screen.clicked.connect(
+            self.btn_onclick_select_whole_screen
+        )
+
         self.btn_start_recording = QPushButton("Start recording")
         self.btn_start_recording.clicked.connect(self.btn_onclick_start_recording)
 
@@ -90,6 +116,7 @@ class CuteRecorderQtApplication:
 
         self.btns_layout = QHBoxLayout()
         self.btns_layout.addWidget(self.btn_select_area)
+        self.btns_layout.addWidget(self.btn_select_whole_screen)
         self.btns_layout.addWidget(self.btn_start_recording)
         self.btns_layout.addWidget(self.btn_stop_recording)
         self.btns_layout.addWidget(self.btn_pick_dest)
@@ -105,9 +132,26 @@ class CuteRecorderQtApplication:
         self.window.setLayout(self.layout)
         self.window.show()
 
+        self.icon = QSystemTrayIcon(self.window)
+        self.icon.setIcon(self.window.style().standardIcon(QStyle.SP_MediaStop))
+        self.icon.activated.connect(self.tray_icon_activated_handler)
+
+    def tray_icon_activated_handler(self, reason):
+        # tray icon was clicked
+        if reason == QSystemTrayIcon.Trigger:
+            self.window.show()
+            self.icon.hide()
+            self.btn_onclick_stop_recording()
+
     def btn_onclick_select_area(self):
         self.selected_area = select_area()
         self.lbl_selected_area.setText(f"Selected area: {self.selected_area}")
+        self.is_whole_screen_selected = False
+
+    def btn_onclick_select_whole_screen(self):
+        self.selected_area = get_screen_dimensions()
+        self.lbl_selected_area.setText(FULLSCREEN_SELECTED_TEXT)
+        self.is_whole_screen_selected = True
 
     def btn_onclick_start_recording(self):
         if self.selected_area is None:
@@ -119,6 +163,10 @@ class CuteRecorderQtApplication:
             )
             warning.open()
             return
+
+        if self.is_whole_screen_selected:
+            self.window.hide()
+            self.icon.show()
 
         self.recorder_proc = start_recording(self.selected_area, self.file_dst)
         self.lbl_is_recording.setText('<font color="Red">RECORDING</font>')
@@ -139,7 +187,9 @@ class CuteRecorderQtApplication:
 
 
 def main():
-    subprocess.run(["swaymsg", 'for_window [app_id="cute-sway-recorder"] floating enable'])
+    subprocess.run(
+        ["swaymsg", 'for_window [app_id="cute-sway-recorder"] floating enable']
+    )
     app = CuteRecorderQtApplication()
     app.exec()
 
