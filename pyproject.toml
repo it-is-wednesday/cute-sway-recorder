@@ -6,8 +6,8 @@ authors = ["Maor Kadosh <qoev@protonmail.com>"]
 license = "GPL-3.0-or-later"
 
 [tool.poetry.dependencies]
-PySide2 = "5.*"
-python = ">=3.7"
+PySide6 = "6.*"
+python = ">=3.6, <3.10" # PySide6 requirements
 
 [tool.poetry.scripts]
 cute-sway-recorder = "cute_sway_recorder.main:main"

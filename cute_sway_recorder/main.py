@@ -5,7 +5,7 @@ import subprocess
 import signal
 from datetime import datetime
 from pathlib import Path
-from PySide2.QtWidgets import (
+from PySide6.QtWidgets import (
     QApplication,
     QPushButton,
     QLabel,
@@ -132,7 +132,7 @@ class CuteRecorderQtApplication:
         self.lbl_file_dst.setText(f"Saving as: {dst}")
 
     def exec(self):
-        return self.app.exec_()
+        return self.app.exec()
 
 
 def main():
