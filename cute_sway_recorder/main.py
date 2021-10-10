@@ -27,6 +27,14 @@ FULLSCREEN_SELECTED_TEXT = """Selected area: whole screen. <br/>
 click the tray icon to stop recording</font>"""
 
 
+def shrink_home(path: str) -> str:
+    """
+    Removes the tilde from path
+    /home/user/x -> ~/x
+    """
+    return path.replace(str(Path.home()), "~")
+
+
 def select_area() -> str:
     """
     Launch slurp to capture a region of the screen, returns its output in the following format:
@@ -63,7 +71,7 @@ def make_file_dst() -> str:
     """
     date = format(datetime.now(), "%Y-%m-%d_%H-%M-%S")
     pathstr = f"~/Videos/cute-sway-recording-{date}.mp4"
-    return str(Path(pathstr))
+    return str(Path(pathstr).expanduser().absolute())
 
 
 def start_recording(area: str, file_dst, include_audio: bool = False) -> subprocess.Popen:
@@ -201,18 +209,17 @@ class CuteRecorderQtApplication:
             self.selected_area, self.file_dst, include_audio=self.checkbox_use_audio.isChecked()
         )
         self.lbl_is_recording.setText('<font color="Red">RECORDING</font>')
-        self.lbl_file_dst.setText(f"Saving as: {self.file_dst}")
+        self.lbl_file_dst.setText(f"Saving as: {shrink_home(self.file_dst)}")
 
     def btn_onclick_stop_recording(self):
         self.recorder_proc.send_signal(signal.SIGINT)
         self.lbl_is_recording.setText("Done recording - successfuly saved!")
-        self.lbl_file_dst.setText(f"Saved to: {self.file_dst}")
+        self.lbl_file_dst.setText(f"Saved to: {shrink_home(self.file_dst)}")
 
     def btn_onclick_pick_dst(self):
         dst = QFileDialog.getSaveFileName(parent=self.window)[0]
         self.file_dst = dst
-        without_home = str(Path(dst)).replace(str(Path.home()), "~")
-        self.lbl_file_dst.setText(f"Saving as: {without_home}")
+        self.lbl_file_dst.setText(f"Saving as: {shrink_home(dst)}")
 
     def exec(self):
         return self.app.exec()
@@ -226,4 +233,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
