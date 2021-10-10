@@ -3,17 +3,27 @@
 import json
 import signal
 import subprocess
+from subprocess import DEVNULL
 import sys
 from datetime import datetime
 from pathlib import Path
 
 from PySide6.QtGui import QIcon
-from PySide6.QtWidgets import (QApplication, QFileDialog, QHBoxLayout, QLabel,
-                               QMessageBox, QPushButton, QStyle,
-                               QSystemTrayIcon, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (
+    QApplication,
+    QFileDialog,
+    QHBoxLayout,
+    QLabel,
+    QMessageBox,
+    QPushButton,
+    QStyle,
+    QSystemTrayIcon,
+    QVBoxLayout,
+    QWidget,
+)
 
 FULLSCREEN_SELECTED_TEXT = (
-    "Selected area: whole screen. <font color=\"salmon\">this window will be "
+    'Selected area: whole screen. <font color="salmon">this window will be '
     "minimized. click the tray icon to stop recording</font>"
 )
 
@@ -101,9 +111,7 @@ class CuteRecorderQtApplication:
         self.btn_select_area.clicked.connect(self.btn_onclick_select_area)
 
         self.btn_select_whole_screen = QPushButton("Select whole screen")
-        self.btn_select_whole_screen.clicked.connect(
-            self.btn_onclick_select_whole_screen
-        )
+        self.btn_select_whole_screen.clicked.connect(self.btn_onclick_select_whole_screen)
 
         self.btn_start_recording = QPushButton("Start recording")
         self.btn_start_recording.clicked.connect(self.btn_onclick_start_recording)
@@ -131,6 +139,20 @@ class CuteRecorderQtApplication:
         self.window.setWindowTitle("Cute Sway Recorder")
         self.window.setLayout(self.layout)
         self.window.show()
+
+        # make sure wf-recorder is avilable
+        proc = subprocess.run(["which", "wf-recorder"], stderr=DEVNULL, stdout=DEVNULL)
+        if proc.returncode != 0:
+            warning = QMessageBox(
+                QMessageBox.Critical,
+                "wf-recorder is not installed",
+                'Refer to <a href="https://github.com/ammen99/wf-recorder">their github</a> for '
+                "installation instructions :)",
+                parent=self.window,
+            )
+            warning.exec()
+            self.window.destroy()
+            sys.exit(1)
 
         self.icon = QSystemTrayIcon(self.window)
         self.icon.setIcon(self.window.style().standardIcon(QStyle.SP_MediaStop))
@@ -187,9 +209,7 @@ class CuteRecorderQtApplication:
 
 
 def main():
-    subprocess.run(
-        ["swaymsg", 'for_window [app_id="cute-sway-recorder"] floating enable']
-    )
+    subprocess.run(["swaymsg", 'for_window [app_id="cute-sway-recorder"] floating enable'])
     app = CuteRecorderQtApplication()
     app.exec()
 
