@@ -22,10 +22,9 @@ from PySide6.QtWidgets import (
     QCheckBox,
 )
 
-FULLSCREEN_SELECTED_TEXT = (
-    'Selected area: whole screen. <font color="salmon">this window will be '
-    "minimized. click the tray icon to stop recording</font>"
-)
+FULLSCREEN_SELECTED_TEXT = """Selected area: whole screen. <br/>
+<font color="salmon">this window will be minimized. <br/>
+click the tray icon to stop recording</font>"""
 
 
 def select_area() -> str:
@@ -64,7 +63,7 @@ def make_file_dst() -> str:
     """
     date = format(datetime.now(), "%Y-%m-%d_%H-%M-%S")
     pathstr = f"~/Videos/cute-sway-recording-{date}.mp4"
-    return str(Path(pathstr).expanduser().absolute())
+    return str(Path(pathstr))
 
 
 def start_recording(area: str, file_dst, include_audio: bool = False) -> subprocess.Popen:
@@ -212,7 +211,8 @@ class CuteRecorderQtApplication:
     def btn_onclick_pick_dst(self):
         dst = QFileDialog.getSaveFileName(parent=self.window)[0]
         self.file_dst = dst
-        self.lbl_file_dst.setText(f"Saving as: {dst}")
+        without_home = str(Path(dst)).replace(str(Path.home()), "~")
+        self.lbl_file_dst.setText(f"Saving as: {without_home}")
 
     def exec(self):
         return self.app.exec()
@@ -226,3 +226,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
