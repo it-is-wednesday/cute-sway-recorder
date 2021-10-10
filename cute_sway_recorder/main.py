@@ -30,9 +30,11 @@ def make_file_dst() -> str:
     """
     Create a sensible (as much as possible, you know) default name for videos that weren't given a
     specific destination path.
+
+    Example result: /home/user/Videos/cute-sway-recording-2021-10-10_09-30-48.mp4
     """
     date = format(datetime.now(), "%Y-%m-%d_%H-%M-%S")
-    pathstr = f"~/Videos/cute-wayland-recording-{date}.mp4"
+    pathstr = f"~/Videos/cute-sway-recording-{date}.mp4"
     return str(Path(pathstr).expanduser().absolute())
 
 

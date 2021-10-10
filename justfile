@@ -1,6 +1,6 @@
 # Run the script without installing
 run:
-	poetry run python cute_wayland_recorder/main.py
+	poetry run python cute_sway_recorder/main.py
 
 # Build wheel and tar artifacts
 build:
@@ -18,7 +18,7 @@ system-install: clean build
 	@# using : instead of / because $HOME will contain slashes. turns out you can use any delimiter
 	@# for the `s` command is sed! whatever comes after the `s` character will be used as the
 	@# delimiter.
-	sed "s:HOME:$HOME:" cute-wayland-recorder.desktop > ~/.local/share/applications/cute-wayland-recorder.desktop
+	sed "s:HOME:$HOME:" cute-sway-recorder.desktop > ~/.local/share/applications/cute-sway-recorder.desktop
 
 # Local Variables:
 # mode: makefile
