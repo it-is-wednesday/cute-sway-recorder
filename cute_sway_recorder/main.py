@@ -64,6 +64,8 @@ class CuteRecorderQtApplication:
 
     def __init__(self):
         self.app = QApplication(sys.argv)
+        self.app.setApplicationDisplayName("Cute Sway Recorder")
+        self.app.setDesktopFileName("cute-sway-recorder")
 
         self.selected_area = None
         self.lbl_selected_area = QLabel("Selected area: None")
@@ -99,6 +101,7 @@ class CuteRecorderQtApplication:
         self.layout.addWidget(self.lbl_is_recording)
 
         self.window = QWidget()
+        self.window.setWindowTitle("Cute Sway Recorder")
         self.window.setLayout(self.layout)
         self.window.show()
 
@@ -136,6 +139,7 @@ class CuteRecorderQtApplication:
 
 
 def main():
+    subprocess.run(["swaymsg", 'for_window [app_id="cute-sway-recorder"] floating enable'])
     app = CuteRecorderQtApplication()
     app.exec()
 
