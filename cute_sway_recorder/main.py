@@ -11,12 +11,14 @@ from datetime import datetime
 from pathlib import Path
 from subprocess import DEVNULL
 from typing import Optional
+from PySide6.QtCore import Qt
 
 from PySide6.QtWidgets import (
     QApplication,
     QCheckBox,
     QFileDialog,
     QGridLayout,
+    QGroupBox,
     QHBoxLayout,
     QLabel,
     QMessageBox,
@@ -191,8 +193,14 @@ class CuteRecorderQtApplication:
         recording_btns.addWidget(self.btn_start_recording)
         recording_btns.addWidget(self.btn_stop_recording)
 
+        lbl_recording_box = QGroupBox()
+        lbl_recording_layout = QVBoxLayout()
+        lbl_recording_layout.addWidget(self.lbl_is_recording, alignment=Qt.AlignCenter)
+        lbl_recording_box.setLayout(lbl_recording_layout)
+
         layout = QVBoxLayout()
         layout.addWidget(self.lbl_whole_screen_notice)
+        layout.addWidget(lbl_recording_box)
         layout.addLayout(grid)
         layout.addWidget(self.checkbox_use_audio)
         layout.addLayout(recording_btns)
