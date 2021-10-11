@@ -245,7 +245,7 @@ class CuteRecorderQtApplication:
         self.lbl_file_dst.setText(f"Saved to: {shrink_home(self.file_dst)}")
 
     def btn_onclick_pick_dst(self):
-        dst = QFileDialog.getSaveFileName(parent=self.window)[0]
+        dst = QFileDialog.getSaveFileName(parent=self.window)[0] + ".mp4"
         self.file_dst = dst
         self.lbl_file_dst.setText(f"Saving as: {shrink_home(dst)}")
 
