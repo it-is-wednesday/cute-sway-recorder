@@ -10,6 +10,7 @@ import sys
 from datetime import datetime
 from pathlib import Path
 from subprocess import DEVNULL
+from typing import Optional
 
 from PySide6.QtWidgets import (
     QApplication,
@@ -53,13 +54,18 @@ def shrink_home(path: str) -> str:
     return path.replace(str(Path.home()), "~")
 
 
-def select_area() -> str:
+def select_area() -> Optional[str]:
     """
     Launch slurp to capture a region of the screen, returns its output in the following format:
     <x>,<y> <width>x<height>
+
+    If slurp is cancelled (by hitting escape), returns None
     """
     cmd = ["slurp", "-f", "%x,%y %wx%h"]
-    return subprocess.run(cmd, capture_output=True).stdout.decode().strip()
+    proc = subprocess.run(cmd, capture_output=True)
+    if proc.returncode == 0:
+        return proc.stdout.decode().strip()
+    return None
 
 
 def make_default_file_dst() -> str:
@@ -135,8 +141,8 @@ class CuteRecorderQtApplication:
         self.lbl_file_dst = QLabel(f"Saving to {shrink_home(self.file_dst)}")
         self.lbl_is_recording = QLabel("Not recording")
         self.lbl_whole_screen_notice = QLabel(
-            '<font color="salmon">this window will be'
-            "minimized. <br/> click the tray icon to stop recording</font>"
+            '<font color="salmon">This window will be minimized. <br/>'
+            "Click the tray icon to stop recording</font>"
         )
         self.lbl_whole_screen_notice.hide()
 
@@ -216,7 +222,7 @@ class CuteRecorderQtApplication:
             self.btn_onclick_stop_recording()
 
     def btn_onclick_select_area(self):
-        self.selected_area = select_area()
+        self.selected_area = select_area() or self.selected_area
         self.selected_screen = None
         self.lbl_selected_area.setText(f"Selected area: {self.selected_area}")
         self.is_whole_screen_selected = False
