@@ -132,7 +132,7 @@ class CuteRecorderQtApplication:
         self.lbl_selected_area = QLabel("Selected area: None")
 
         self.file_dst = make_file_dst()
-        self.lbl_file_dst = QLabel("Saving to ~/Videos")
+        self.lbl_file_dst = QLabel(f"Saving to {self.file_dst}")
 
         self.recorder_proc = None
         self.lbl_is_recording = QLabel("Not recording")
@@ -269,7 +269,9 @@ class CuteRecorderQtApplication:
             enabled=True,
         )
         self.recorder_proc.send_signal(signal.SIGINT)
-        self.lbl_is_recording.setText("Done recording - successfuly saved!")
+        self.lbl_is_recording.setText(
+            '<font color="Green">Done recording - successfuly saved!</font>'
+        )
         self.lbl_file_dst.setText(f"Saved to: {shrink_home(self.file_dst)}")
 
     def btn_onclick_pick_dst(self):
