@@ -27,6 +27,11 @@ FULLSCREEN_SELECTED_TEXT = """Selected area: whole screen. <br/>
 click the tray icon to stop recording</font>"""
 
 
+def set_buttons_state(*btns, enabled: bool):
+    for b in btns:
+        b.setEnabled(enabled)
+
+
 def shrink_home(path: str) -> str:
     """
     Removes the tilde from path
@@ -128,6 +133,7 @@ class CuteRecorderQtApplication:
 
         self.btn_stop_recording = QPushButton("Stop recording")
         self.btn_stop_recording.clicked.connect(self.btn_onclick_stop_recording)
+        self.btn_stop_recording.setEnabled(False)
 
         self.btn_pick_dest = QPushButton("Pick file destination")
         self.btn_pick_dest.clicked.connect(self.btn_onclick_pick_dst)
@@ -210,6 +216,15 @@ class CuteRecorderQtApplication:
             self.window.hide()
             self.icon.show()
 
+        self.btn_stop_recording.setEnabled(True)
+        set_buttons_state(
+            self.btn_pick_dest,
+            self.btn_select_area,
+            self.btn_select_whole_screen,
+            self.btn_start_recording,
+            enabled=False,
+        )
+
         self.recorder_proc = start_recording(
             self.selected_area, self.file_dst, include_audio=self.checkbox_use_audio.isChecked()
         )
@@ -217,6 +232,14 @@ class CuteRecorderQtApplication:
         self.lbl_file_dst.setText(f"Saving as: {shrink_home(self.file_dst)}")
 
     def btn_onclick_stop_recording(self):
+        self.btn_stop_recording.setEnabled(False)
+        set_buttons_state(
+            self.btn_pick_dest,
+            self.btn_select_area,
+            self.btn_select_whole_screen,
+            self.btn_start_recording,
+            enabled=True,
+        )
         self.recorder_proc.send_signal(signal.SIGINT)
         self.lbl_is_recording.setText("Done recording - successfuly saved!")
         self.lbl_file_dst.setText(f"Saved to: {shrink_home(self.file_dst)}")
