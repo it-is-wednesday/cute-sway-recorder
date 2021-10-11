@@ -23,11 +23,22 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-FULLSCREEN_SELECTED_TEXT = """Selected area: whole screen. <br/>
+from cute_sway_recorder.screen_selection import ScreenSelectionDialog
+
+FULLSCREEN_SELECTED_TEXT = """Selected area: whole screen ({screen}) <br/>
 <font color="salmon">this window will be minimized. <br/>
 click the tray icon to stop recording</font>"""
 
 PATTERN_FILE_WITH_SUFFIX = re.compile(r".*\..*")
+
+
+def available_screens():
+    """
+    Returns a list of all available outputs via `swaymsg -t get_outputs`, e.g.:
+    ['eDP-1', 'HDMI-A-1']
+    """
+    out = subprocess.check_output(["swaymsg", "-t", "get_outputs"], text=True)
+    return [o["name"] for o in json.loads(out)]
 
 
 def set_buttons_state(*btns, enabled: bool):
@@ -52,24 +63,6 @@ def select_area() -> str:
     return subprocess.run(cmd, capture_output=True).stdout.decode().strip()
 
 
-def get_screen_dimensions() -> str:
-    """
-    Get dimensions of currently focused screen via swaymsg. Returns a string in the same format as
-    `select_area()`.
-
-    If no screen if focused (?), raises ValueError
-    """
-    outputs = subprocess.check_output(["swaymsg", "-t", "get_outputs"])
-    outputs = json.loads(outputs)
-
-    for o in outputs:
-        if o["focused"] == True:
-            rect = o["rect"]
-            return f"0,0 {rect['width']}x{rect['height']}"
-
-    raise ValueError("No focused screen found with `swaymsg -t get_outputs`")
-
-
 def make_file_dst() -> str:
     """
     Create a sensible (as much as possible, you know) default name for videos that weren't given a
@@ -82,25 +75,43 @@ def make_file_dst() -> str:
     return str(Path(pathstr).expanduser().absolute())
 
 
-def start_recording(area: str, file_dst, include_audio: bool = False) -> subprocess.Popen:
+def start_recording(
+    file_dst, include_audio: bool = False, area: str = None, screen: str = None
+) -> subprocess.Popen:
     """
     Launches a `wf-recorder` process and returns a Popen object representing
     it.
 
-    `area` is a description of a rectangular area on the screen, of the
+    area is a description of a rectangular area on the screen, of the
     following format: <x>,<y> <width>x<height>
     Same output as the `slurp` command (https://github.com/emersion/slurp).
 
-    Saves the recording to `file_dst`, which is a path-like object.
+    If area is None, record the whole monitor. If there's more than one monitor, then param screen
+    decides which one to record. screen can be taken from `swaymsg -t get_outputs`.
+    e.g.: HDMI-A-1
+
+    Note that only one of area and screen should be passed, since area encompasses the screen info
+    as well (by specifying coordinates larger than the first monitor size).
+
+    Saves the recording to file_dst, which is a path-like object.
     """
+    if area and screen:
+        raise ValueError("Only one of area and screen should be passed")
+
     if file_dst is None:
         file_dst = Path().absolute()
     else:
         Path(file_dst).parent.mkdir(parents=True, exist_ok=True)
 
-    params = ["wf-recorder", "--geometry", area, "-f", file_dst]
+    params = ["wf-recorder", "-f", file_dst]
     if include_audio:
         params.append("--audio")
+    if area:
+        params.append("--geometry")
+        params.append(area)
+    if screen:
+        params.append("--output")
+        params.append(screen)
     return subprocess.Popen(params)
 
 
@@ -111,12 +122,13 @@ class CuteRecorderQtApplication:
 
     def __init__(self):
         self.is_whole_screen_selected = False
+        self.selected_area = None
+        self.selected_screen = None
 
         self.app = QApplication(sys.argv)
         self.app.setApplicationDisplayName("Cute Sway Recorder")
         self.app.setDesktopFileName("cute-sway-recorder")
 
-        self.selected_area = None
         self.lbl_selected_area = QLabel("Selected area: None")
 
         self.file_dst = make_file_dst()
@@ -196,29 +208,37 @@ class CuteRecorderQtApplication:
 
     def btn_onclick_select_area(self):
         self.selected_area = select_area()
+        self.selected_screen = None
         self.lbl_selected_area.setText(f"Selected area: {self.selected_area}")
         self.is_whole_screen_selected = False
 
     def btn_onclick_select_whole_screen(self):
-        self.selected_area = get_screen_dimensions()
-        self.lbl_selected_area.setText(FULLSCREEN_SELECTED_TEXT)
+        self.selected_area = None
+        screens = available_screens()
+        if len(screens) > 1:
+            selected_screen_idx = ScreenSelectionDialog(screens, parent=self.window).exec()
+            self.selected_screen = screens[selected_screen_idx]
+        self.lbl_selected_area.setText(FULLSCREEN_SELECTED_TEXT.format(screen=self.selected_screen))
         self.is_whole_screen_selected = True
 
     def btn_onclick_start_recording(self):
-        if self.selected_area is None:
+        # show error message and return if no area was selected
+        if self.selected_area is None and self.selected_screen is None:
             warning = QMessageBox(
                 QMessageBox.Critical,
                 "No area selected",
-                "Kindly select an area :)",
+                "Kindly select an area or pick a screen :)",
                 parent=self.window,
             )
             warning.exec()
             return
 
+        # show tray icon if recording fullscreen
         if self.is_whole_screen_selected:
             self.window.hide()
             self.icon.show()
 
+        # disable all buttons other than stop record
         self.btn_stop_recording.setEnabled(True)
         set_buttons_state(
             self.btn_pick_dest,
@@ -229,7 +249,10 @@ class CuteRecorderQtApplication:
         )
 
         self.recorder_proc = start_recording(
-            self.selected_area, self.file_dst, include_audio=self.checkbox_use_audio.isChecked()
+            self.file_dst,
+            include_audio=self.checkbox_use_audio.isChecked(),
+            area=self.selected_area,
+            screen=self.selected_screen,
         )
         self.lbl_is_recording.setText('<font color="Red">RECORDING</font>')
         self.lbl_file_dst.setText(f"Saving as: {shrink_home(self.file_dst)}")
