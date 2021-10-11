@@ -3,13 +3,14 @@
 import json
 import signal
 import subprocess
-from subprocess import DEVNULL
 import sys
 from datetime import datetime
 from pathlib import Path
+from subprocess import DEVNULL
 
 from PySide6.QtWidgets import (
     QApplication,
+    QCheckBox,
     QFileDialog,
     QGridLayout,
     QLabel,
@@ -19,7 +20,6 @@ from PySide6.QtWidgets import (
     QSystemTrayIcon,
     QVBoxLayout,
     QWidget,
-    QCheckBox,
 )
 
 FULLSCREEN_SELECTED_TEXT = """Selected area: whole screen. <br/>
@@ -92,7 +92,7 @@ def start_recording(area: str, file_dst, include_audio: bool = False) -> subproc
 
     params = ["wf-recorder", "--geometry", area, "-f", file_dst]
     if include_audio:
-        params.append("-a")
+        params.append("--audio")
     return subprocess.Popen(params)
 
 
@@ -155,23 +155,28 @@ class CuteRecorderQtApplication:
         self.window.setLayout(self.layout)
         self.window.show()
 
-        # make sure wf-recorder is avilable
-        proc = subprocess.run(["which", "wf-recorder"], stderr=DEVNULL, stdout=DEVNULL)
-        if proc.returncode != 0:
-            warning = QMessageBox(
-                QMessageBox.Critical,
-                "wf-recorder is not installed",
-                'Refer to <a href="https://github.com/ammen99/wf-recorder">their github</a> for '
-                "installation instructions :)",
-                parent=self.window,
-            )
-            warning.exec()
-            self.window.destroy()
-            sys.exit(1)
+        self.cmd_available_or_exit("wf-recorder")
+        self.cmd_available_or_exit("slurp")
 
         self.icon = QSystemTrayIcon(self.window)
         self.icon.setIcon(self.window.style().standardIcon(QStyle.SP_MediaStop))
         self.icon.activated.connect(self.tray_icon_activated_handler)
+
+    def cmd_available_or_exit(self, cmd: str):
+        """
+        Show an error popup if cmd is not available in PATH, then exit.
+        Availability is checked via `which`
+        """
+        proc = subprocess.run(["which", cmd], stderr=DEVNULL, stdout=DEVNULL)
+        if proc.returncode != 0:
+            warning = QMessageBox(
+                QMessageBox.Critical,
+                "Executable not found",
+                f"<code>{cmd}</code> not in PATH please install it :(",
+                parent=self.window,
+            )
+            warning.exec()
+            sys.exit(1)
 
     def tray_icon_activated_handler(self, reason):
         # tray icon was clicked
@@ -198,7 +203,7 @@ class CuteRecorderQtApplication:
                 "Kindly select an area :)",
                 parent=self.window,
             )
-            warning.open()
+            warning.exec()
             return
 
         if self.is_whole_screen_selected:
