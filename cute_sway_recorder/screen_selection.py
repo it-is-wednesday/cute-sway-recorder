@@ -22,3 +22,6 @@ class ScreenSelectionDialog(QDialog):
         def new_func():
             self.done(int_to_return)
         return new_func
+
+    def reject(self) -> None:
+        self.done(-1)
