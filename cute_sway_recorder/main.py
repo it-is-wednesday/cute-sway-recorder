@@ -154,6 +154,7 @@ class CuteRecorderQtApplication:
         self.btn_start_recording = QPushButton("Start recording")
         self.btn_stop_recording = QPushButton("Stop recording")
         self.btn_pick_dest = QPushButton("Pick file destination")
+        self.btn_generate_random_dest = QPushButton("Random name")
         self.checkbox_use_audio = QCheckBox("Record audio")
 
         ## Connect buttons on-click actions
@@ -163,6 +164,7 @@ class CuteRecorderQtApplication:
         self.btn_stop_recording.clicked.connect(self.btn_onclick_stop_recording)
         self.btn_stop_recording.setEnabled(False)
         self.btn_pick_dest.clicked.connect(self.btn_onclick_pick_dst)
+        self.btn_generate_random_dest.clicked.connect(self.btn_onclick_generate_random_dest)
 
         ## Show window
         self.window = QWidget()
@@ -187,7 +189,8 @@ class CuteRecorderQtApplication:
         grid.addWidget(self.btn_select_whole_screen, 0, 2)
 
         grid.addWidget(self.lbl_file_dst, 1, 0)
-        grid.addWidget(self.btn_pick_dest, 1, 1, 1, 2)
+        grid.addWidget(self.btn_pick_dest, 1, 1)
+        grid.addWidget(self.btn_generate_random_dest, 1, 2)
 
         recording_btns = QHBoxLayout()
         recording_btns.addWidget(self.btn_start_recording)
@@ -199,8 +202,8 @@ class CuteRecorderQtApplication:
         lbl_recording_box.setLayout(lbl_recording_layout)
 
         layout = QVBoxLayout()
-        layout.addWidget(self.lbl_whole_screen_notice)
         layout.addWidget(lbl_recording_box)
+        layout.addWidget(self.lbl_whole_screen_notice)
         layout.addLayout(grid)
         layout.addWidget(self.checkbox_use_audio)
         layout.addLayout(recording_btns)
@@ -323,6 +326,10 @@ class CuteRecorderQtApplication:
             dest = f"{dest}.mp4"
         self.file_dst = dest
         self.lbl_file_dst.setText(f"Saving as: {shrink_home(dest)}")
+
+    def btn_onclick_generate_random_dest(self):
+        self.file_dst = make_default_file_dst()
+        self.lbl_file_dst.setText(f"Saving to {shrink_home(self.file_dst)}")
 
     def exec(self):
         return self.app.exec()
