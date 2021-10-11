@@ -70,7 +70,7 @@ def select_area() -> Optional[str]:
     return None
 
 
-def make_default_file_dst() -> str:
+def make_default_file_dest() -> str:
     """
     Create a sensible (as much as possible, you know) default name for videos that weren't given a
     specific destination path.
@@ -131,7 +131,7 @@ class CuteRecorderQtApplication:
         self.selected_area = None
         self.recorder_proc = None
         self.selected_screen = None
-        self.file_dst = make_default_file_dst()
+        self.file_dest = make_default_file_dest()
         self.is_whole_screen_selected = False
 
         self.app = QApplication(sys.argv)
@@ -140,7 +140,7 @@ class CuteRecorderQtApplication:
 
         ## Create labels
         self.lbl_selected_area = QLabel("Selected area: None")
-        self.lbl_file_dst = QLabel(f"Saving to {shrink_home(self.file_dst)}")
+        self.lbl_file_dst = QLabel(f"Saving as: {shrink_home(self.file_dest)}")
         self.lbl_is_recording = QLabel("Not recording")
         self.lbl_whole_screen_notice = QLabel(
             '<font color="salmon">This window will be minimized. <br/>'
@@ -253,11 +253,11 @@ class CuteRecorderQtApplication:
 
     def btn_onclick_start_recording(self):
         # confirm dest file override
-        if Path(self.file_dst).exists():
+        if Path(self.file_dest).exists():
             resp = QMessageBox.question(
                 self.window,
                 "File exists",
-                f"Override {self.file_dst}?",
+                f"Override {self.file_dest}?",
                 QMessageBox.Yes,
                 QMessageBox.No,
             )
@@ -292,9 +292,12 @@ class CuteRecorderQtApplication:
             enabled=False,
         )
 
+        # reset the "saved as" label, if it's not the first recording session
+        self.lbl_file_dst.setText(f"Saving as: {shrink_home(self.file_dest)}")
+
         # launch wf-recorder
         self.recorder_proc = start_recording(
-            self.file_dst,
+            self.file_dest,
             include_audio=self.checkbox_use_audio.isChecked(),
             area=self.selected_area,
             screen=self.selected_screen,
@@ -302,7 +305,7 @@ class CuteRecorderQtApplication:
 
         # set respective labels
         self.lbl_is_recording.setText('<font color="Red">RECORDING</font>')
-        self.lbl_file_dst.setText(f"Saving as: {shrink_home(self.file_dst)}")
+        self.lbl_file_dst.setText(f"Saving as: {shrink_home(self.file_dest)}")
 
     def btn_onclick_stop_recording(self):
         self.btn_stop_recording.setEnabled(False)
@@ -315,10 +318,10 @@ class CuteRecorderQtApplication:
             enabled=True,
         )
         self.recorder_proc.send_signal(signal.SIGINT)
-        self.lbl_is_recording.setText(
-            '<font color="Green">Done recording - successfuly saved!</font>'
+        self.lbl_is_recording.setText('<font color="Green">Done recording</font>')
+        self.lbl_file_dst.setText(
+            f'<font color="Green">Saved to: {shrink_home(self.file_dest)}</font>'
         )
-        self.lbl_file_dst.setText(f"Saved to: {shrink_home(self.file_dst)}")
 
     def btn_onclick_pick_dst(self):
         dest: str = QFileDialog.getSaveFileName(parent=self.window)[0]
@@ -326,12 +329,12 @@ class CuteRecorderQtApplication:
             return
         if not PATTERN_FILE_WITH_SUFFIX.match(dest):
             dest = f"{dest}.mp4"
-        self.file_dst = dest
+        self.file_dest = dest
         self.lbl_file_dst.setText(f"Saving as: {shrink_home(dest)}")
 
     def btn_onclick_generate_random_dest(self):
-        self.file_dst = make_default_file_dst()
-        self.lbl_file_dst.setText(f"Saving to {shrink_home(self.file_dst)}")
+        self.file_dest = make_default_file_dest()
+        self.lbl_file_dst.setText(f"Saving as: {shrink_home(self.file_dest)}")
 
     def exec(self):
         return self.app.exec()
