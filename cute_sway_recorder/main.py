@@ -121,67 +121,67 @@ class CuteRecorderQtApplication:
     """
 
     def __init__(self):
-        self.is_whole_screen_selected = False
         self.selected_area = None
+        self.recorder_proc = None
         self.selected_screen = None
+        self.file_dst = make_file_dst()
+        self.is_whole_screen_selected = False
 
         self.app = QApplication(sys.argv)
         self.app.setApplicationDisplayName("Cute Sway Recorder")
         self.app.setDesktopFileName("cute-sway-recorder")
 
+        ## Create labels
         self.lbl_selected_area = QLabel("Selected area: None")
-
-        self.file_dst = make_file_dst()
         self.lbl_file_dst = QLabel(f"Saving to {self.file_dst}")
-
-        self.recorder_proc = None
         self.lbl_is_recording = QLabel("Not recording")
 
+        ## Create buttons
         self.btn_select_area = QPushButton("Select an area")
-        self.btn_select_area.clicked.connect(self.btn_onclick_select_area)
-
         self.btn_select_whole_screen = QPushButton("Select whole screen")
-        self.btn_select_whole_screen.clicked.connect(self.btn_onclick_select_whole_screen)
-
         self.btn_start_recording = QPushButton("Start recording")
-        self.btn_start_recording.clicked.connect(self.btn_onclick_start_recording)
-
         self.btn_stop_recording = QPushButton("Stop recording")
-        self.btn_stop_recording.clicked.connect(self.btn_onclick_stop_recording)
-        self.btn_stop_recording.setEnabled(False)
-
         self.btn_pick_dest = QPushButton("Pick file destination")
-        self.btn_pick_dest.clicked.connect(self.btn_onclick_pick_dst)
-
         self.checkbox_use_audio = QCheckBox("Record audio")
 
-        self.btns_grid = QGridLayout()
-        self.btns_grid.addWidget(self.btn_select_area, 0, 0)
-        self.btns_grid.addWidget(self.btn_select_whole_screen, 0, 1)
+        ## Connect buttons on-click actions
+        self.btn_select_area.clicked.connect(self.btn_onclick_select_area)
+        self.btn_select_whole_screen.clicked.connect(self.btn_onclick_select_whole_screen)
+        self.btn_start_recording.clicked.connect(self.btn_onclick_start_recording)
+        self.btn_stop_recording.clicked.connect(self.btn_onclick_stop_recording)
+        self.btn_stop_recording.setEnabled(False)
+        self.btn_pick_dest.clicked.connect(self.btn_onclick_pick_dst)
 
-        self.btns_grid.addWidget(self.btn_start_recording, 1, 0)
-        self.btns_grid.addWidget(self.btn_stop_recording, 1, 1)
-
-        self.btns_grid.addWidget(self.btn_pick_dest, 2, 0)
-        self.btns_grid.addWidget(self.checkbox_use_audio, 2, 1)
-
-        self.layout = QVBoxLayout()
-        self.layout.addLayout(self.btns_grid)
-        self.layout.addWidget(self.lbl_selected_area)
-        self.layout.addWidget(self.lbl_file_dst)
-        self.layout.addWidget(self.lbl_is_recording)
-
+        ## Show window
         self.window = QWidget()
         self.window.setWindowTitle("Cute Sway Recorder")
-        self.window.setLayout(self.layout)
+        self.window.setLayout(self.layout())
         self.window.show()
 
+        ## Verify executable dependencies
         self.cmd_available_or_exit("wf-recorder")
         self.cmd_available_or_exit("slurp")
 
+        ## Define whole-screen icon (not showing yet)
         self.icon = QSystemTrayIcon(self.window)
         self.icon.setIcon(self.window.style().standardIcon(QStyle.SP_MediaStop))
         self.icon.activated.connect(self.tray_icon_activated_handler)
+
+    def layout(self):
+        btns_grid = QGridLayout()
+        btns_grid.addWidget(self.btn_select_area, 0, 0)
+        btns_grid.addWidget(self.btn_select_whole_screen, 0, 1)
+        btns_grid.addWidget(self.btn_start_recording, 1, 0)
+        btns_grid.addWidget(self.btn_stop_recording, 1, 1)
+        btns_grid.addWidget(self.btn_pick_dest, 2, 0)
+        btns_grid.addWidget(self.checkbox_use_audio, 2, 1)
+
+        layout = QVBoxLayout()
+        layout.addLayout(btns_grid)
+        layout.addWidget(self.lbl_selected_area)
+        layout.addWidget(self.lbl_file_dst)
+        layout.addWidget(self.lbl_is_recording)
+        return layout
 
     def cmd_available_or_exit(self, cmd: str):
         """
@@ -250,12 +250,15 @@ class CuteRecorderQtApplication:
             enabled=False,
         )
 
+        # launch wf-recorder
         self.recorder_proc = start_recording(
             self.file_dst,
             include_audio=self.checkbox_use_audio.isChecked(),
             area=self.selected_area,
             screen=self.selected_screen,
         )
+
+        # set respective labels
         self.lbl_is_recording.setText('<font color="Red">RECORDING</font>')
         self.lbl_file_dst.setText(f"Saving as: {shrink_home(self.file_dst)}")
 
