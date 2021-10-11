@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 #
 import json
+import random
 import re
 import signal
+import string
 import subprocess
 import sys
 from datetime import datetime
@@ -14,6 +16,7 @@ from PySide6.QtWidgets import (
     QCheckBox,
     QFileDialog,
     QGridLayout,
+    QHBoxLayout,
     QLabel,
     QMessageBox,
     QPushButton,
@@ -24,10 +27,6 @@ from PySide6.QtWidgets import (
 )
 
 from cute_sway_recorder.screen_selection import ScreenSelectionDialog
-
-FULLSCREEN_SELECTED_TEXT = """Selected area: whole screen ({screen}) <br/>
-<font color="salmon">this window will be minimized. <br/>
-click the tray icon to stop recording</font>"""
 
 PATTERN_FILE_WITH_SUFFIX = re.compile(r".*\..*")
 
@@ -63,15 +62,15 @@ def select_area() -> str:
     return subprocess.run(cmd, capture_output=True).stdout.decode().strip()
 
 
-def make_file_dst() -> str:
+def make_default_file_dst() -> str:
     """
     Create a sensible (as much as possible, you know) default name for videos that weren't given a
     specific destination path.
 
     Example result: /home/user/Videos/cute-sway-recording-2021-10-10_09-30-48.mp4
     """
-    date = format(datetime.now(), "%Y-%m-%d_%H-%M-%S")
-    pathstr = f"~/Videos/cute-sway-recording-{date}.mp4"
+    identifier = "".join(random.choices(string.ascii_letters, k=5))
+    pathstr = f"~/Videos/cute-{identifier}.mp4"
     return str(Path(pathstr).expanduser().absolute())
 
 
@@ -124,7 +123,7 @@ class CuteRecorderQtApplication:
         self.selected_area = None
         self.recorder_proc = None
         self.selected_screen = None
-        self.file_dst = make_file_dst()
+        self.file_dst = make_default_file_dst()
         self.is_whole_screen_selected = False
 
         self.app = QApplication(sys.argv)
@@ -133,8 +132,13 @@ class CuteRecorderQtApplication:
 
         ## Create labels
         self.lbl_selected_area = QLabel("Selected area: None")
-        self.lbl_file_dst = QLabel(f"Saving to {self.file_dst}")
+        self.lbl_file_dst = QLabel(f"Saving to {shrink_home(self.file_dst)}")
         self.lbl_is_recording = QLabel("Not recording")
+        self.lbl_whole_screen_notice = QLabel(
+            '<font color="salmon">this window will be'
+            "minimized. <br/> click the tray icon to stop recording</font>"
+        )
+        self.lbl_whole_screen_notice.hide()
 
         ## Create buttons
         self.btn_select_area = QPushButton("Select an area")
@@ -168,19 +172,24 @@ class CuteRecorderQtApplication:
         self.icon.activated.connect(self.tray_icon_activated_handler)
 
     def layout(self):
-        btns_grid = QGridLayout()
-        btns_grid.addWidget(self.btn_select_area, 0, 0)
-        btns_grid.addWidget(self.btn_select_whole_screen, 0, 1)
-        btns_grid.addWidget(self.btn_start_recording, 1, 0)
-        btns_grid.addWidget(self.btn_stop_recording, 1, 1)
-        btns_grid.addWidget(self.btn_pick_dest, 2, 0)
-        btns_grid.addWidget(self.checkbox_use_audio, 2, 1)
+        grid = QGridLayout()
+
+        grid.addWidget(self.lbl_selected_area, 0, 0)
+        grid.addWidget(self.btn_select_area, 0, 1)
+        grid.addWidget(self.btn_select_whole_screen, 0, 2)
+
+        grid.addWidget(self.lbl_file_dst, 1, 0)
+        grid.addWidget(self.btn_pick_dest, 1, 1, 1, 2)
+
+        recording_btns = QHBoxLayout()
+        recording_btns.addWidget(self.btn_start_recording)
+        recording_btns.addWidget(self.btn_stop_recording)
 
         layout = QVBoxLayout()
-        layout.addLayout(btns_grid)
-        layout.addWidget(self.lbl_selected_area)
-        layout.addWidget(self.lbl_file_dst)
-        layout.addWidget(self.lbl_is_recording)
+        layout.addWidget(self.lbl_whole_screen_notice)
+        layout.addLayout(grid)
+        layout.addWidget(self.checkbox_use_audio)
+        layout.addLayout(recording_btns)
         return layout
 
     def cmd_available_or_exit(self, cmd: str):
@@ -211,6 +220,7 @@ class CuteRecorderQtApplication:
         self.selected_screen = None
         self.lbl_selected_area.setText(f"Selected area: {self.selected_area}")
         self.is_whole_screen_selected = False
+        self.lbl_whole_screen_notice.hide()
 
     def btn_onclick_select_whole_screen(self):
         screens = available_screens()
@@ -220,7 +230,8 @@ class CuteRecorderQtApplication:
                 return
             self.selected_screen = screens[selected_screen_idx]
         self.selected_area = None
-        self.lbl_selected_area.setText(FULLSCREEN_SELECTED_TEXT.format(screen=self.selected_screen))
+        self.lbl_selected_area.setText(f"Selected screen: {self.selected_screen}")
+        self.lbl_whole_screen_notice.show()
         self.is_whole_screen_selected = True
 
     def btn_onclick_start_recording(self):
