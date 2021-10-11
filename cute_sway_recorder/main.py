@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 #
 import json
+import re
 import signal
 import subprocess
 import sys
@@ -25,6 +26,8 @@ from PySide6.QtWidgets import (
 FULLSCREEN_SELECTED_TEXT = """Selected area: whole screen. <br/>
 <font color="salmon">this window will be minimized. <br/>
 click the tray icon to stop recording</font>"""
+
+PATTERN_FILE_WITH_SUFFIX = re.compile(r".*\..*")
 
 
 def set_buttons_state(*btns, enabled: bool):
@@ -245,7 +248,9 @@ class CuteRecorderQtApplication:
         self.lbl_file_dst.setText(f"Saved to: {shrink_home(self.file_dst)}")
 
     def btn_onclick_pick_dst(self):
-        dst = QFileDialog.getSaveFileName(parent=self.window)[0] + ".mp4"
+        dst: str = QFileDialog.getSaveFileName(parent=self.window)[0]
+        if not PATTERN_FILE_WITH_SUFFIX.match(dst):
+            dst = f"{dst}.mp4"
         self.file_dst = dst
         self.lbl_file_dst.setText(f"Saving as: {shrink_home(dst)}")
 
