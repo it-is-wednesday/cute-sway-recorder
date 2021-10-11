@@ -285,6 +285,7 @@ class CuteRecorderQtApplication:
         self.btn_stop_recording.setEnabled(True)
         set_buttons_state(
             self.btn_pick_dest,
+            self.btn_generate_random_dest,
             self.btn_select_area,
             self.btn_select_whole_screen,
             self.btn_start_recording,
@@ -307,6 +308,7 @@ class CuteRecorderQtApplication:
         self.btn_stop_recording.setEnabled(False)
         set_buttons_state(
             self.btn_pick_dest,
+            self.btn_generate_random_dest,
             self.btn_select_area,
             self.btn_select_whole_screen,
             self.btn_start_recording,
