@@ -15,3 +15,7 @@ You might prefer using [pipx](https://pypa.github.io/pipx/):
 ``` shell
 pipx install cute-sway-recorder
 ```
+
+## Screenshot
+
+![](screenshot.png)
