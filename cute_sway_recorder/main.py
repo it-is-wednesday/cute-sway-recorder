@@ -249,6 +249,19 @@ class CuteRecorderQtApplication:
         self.is_whole_screen_selected = True
 
     def btn_onclick_start_recording(self):
+        # confirm dest file override
+        if Path(self.file_dst).exists():
+            resp = QMessageBox.question(
+                self.window,
+                "File exists",
+                f"Override {self.file_dst}?",
+                QMessageBox.Yes,
+                QMessageBox.No,
+            )
+            if resp == QMessageBox.No:
+                self.lbl_is_recording.setText("Not recording")
+                return
+
         # show error message and return if no area was selected
         if self.selected_area is None and self.selected_screen is None:
             warning = QMessageBox(
