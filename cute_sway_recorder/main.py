@@ -105,10 +105,7 @@ def start_recording(
     if area and screen:
         raise ValueError("Only one of area and screen should be passed")
 
-    if file_dst is None:
-        file_dst = Path().absolute()
-    else:
-        Path(file_dst).parent.mkdir(parents=True, exist_ok=True)
+    Path(file_dst).parent.mkdir(parents=True, exist_ok=True)
 
     params = ["wf-recorder", "-f", file_dst]
     if include_audio:
