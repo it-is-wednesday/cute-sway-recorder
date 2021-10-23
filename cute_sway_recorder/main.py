@@ -75,7 +75,7 @@ def make_default_file_dest() -> str:
     Create a sensible (as much as possible, you know) default name for videos that weren't given a
     specific destination path.
 
-    Example result: /home/user/Videos/cute-sway-recording-2021-10-10_09-30-48.mp4
+    Example result: /home/user/Videos/cute-NOwPn.mp4
     """
     identifier = "".join(random.choices(string.ascii_letters, k=5))
     pathstr = f"~/Videos/cute-{identifier}.mp4"
