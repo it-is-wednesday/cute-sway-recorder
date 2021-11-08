@@ -4,7 +4,7 @@ Screen recorder for [`wlroots`](https://github.com/swaywm/wlroots)-based window 
 
 More specifically, this project is merely a graphical [Qt](https://www.qt.io/) wrapper for
 [`wf-recorder`](https://github.com/ammen99/wf-recorder), leveraging
-[`slurp`](https://github.com/emersion/slurp) for selecing screen regions.
+[`slurp`](https://github.com/emersion/slurp) for selecting screen regions.
 
 ![](screenshot-recording.png)
 ![](screenshot-done.png)
