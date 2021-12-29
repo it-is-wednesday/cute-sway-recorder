@@ -31,19 +31,8 @@ def start_recording(
     include_audio: bool = False,
 ) -> subprocess.Popen:
     """
-    Launches a `wf-recorder` process and returns a Popen object representing
-    it.
-
-    area is a description of a rectangular area on the screen, of the
-    following format: <x>,<y> <width>x<height>
-    Same output as the `slurp` command (https://github.com/emersion/slurp).
-
-    If area is None, record the whole monitor. If there's more than one monitor, then param screen
-    decides which one to record. screen can be taken from `swaymsg -t get_outputs`.
-    e.g.: HDMI-A-1
-
-    Note that only one of area and screen should be passed, since area encompasses the screen info
-    as well (by specifying coordinates larger than the first monitor size).
+    Launches a `wf-recorder` process and returns a Popen object representing it. Records a portion
+    of a screen or a whole screen.
 
     Saves the recording to file_dst, which is a path-like object.
     """

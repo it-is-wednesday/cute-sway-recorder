@@ -16,6 +16,10 @@ def available_screens() -> List[str]:
 
 
 class SelectedScreen(str):
+    """
+    Textual representation of one of your monitors. Raises ValueError if instantiated with a string
+    which isn't one of the monitors. List of monitors is decided by `available_screens()`.
+    """
     def __init__(self, s):
         screens = available_screens()
         if s not in screens:
@@ -23,9 +27,24 @@ class SelectedScreen(str):
 
 
 class SelectedArea(str):
+    """
+    Textual description of a rectangular area on the screen, of the
+    following format: <x>,<y> <width>x<height>
+    Same output as the `slurp` command (https://github.com/emersion/slurp).
+
+    Raises ValueError if instantiated with a string not of the specified format
+
+    >>> SelectedArea("10,10 40x40")
+    '10,10 40x40'
+    >>> SelectedArea("hey")
+    Traceback (most recent call last):
+    ...
+    ValueError: Area 'hey' isn't of format: 'x,y width,height'
+    """
+
     def __init__(self, s):
         if not PATTERN_SELECTED_AREA.match(s):
-            raise ValueError(f"Area {s} isn't of format: 'x,y width,height'")
+            raise ValueError(f"Area '{s}' isn't of format: 'x,y width,height'")
 
 
 def set_buttons_state(*btns, enabled: bool):
