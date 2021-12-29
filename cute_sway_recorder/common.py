@@ -45,8 +45,3 @@ class SelectedArea(str):
     def __init__(self, s):
         if not PATTERN_SELECTED_AREA.match(s):
             raise ValueError(f"Area '{s}' isn't of format: 'x,y width,height'")
-
-
-def set_buttons_state(*btns, enabled: bool):
-    for b in btns:
-        b.setEnabled(enabled)

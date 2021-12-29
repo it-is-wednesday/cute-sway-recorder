@@ -1,6 +1,7 @@
 import subprocess
 from typing import Optional, Union
-from PySide6.QtWidgets import QGroupBox, QLabel, QPushButton, QVBoxLayout
+from PySide6.QtCore import QSize
+from PySide6.QtWidgets import QGroupBox, QHBoxLayout, QLabel, QPushButton, QVBoxLayout
 
 from common import SelectedArea, SelectedScreen, available_screens
 from screen_selection import ScreenSelectionDialog
@@ -22,12 +23,8 @@ def select_area() -> Optional[SelectedArea]:
 
 class SelectionGroupbox(QGroupBox):
     def __init__(self, window):
-        super().__init__(title="What are we recording?")
+        super().__init__()
         self.window = window
-
-        self.title
-
-        layout = QVBoxLayout()
 
         self.lbl_whole_screen_notice = QLabel(
             '<font color="salmon">This window will be minimized. <br/>'
@@ -41,15 +38,26 @@ class SelectionGroupbox(QGroupBox):
         self.lbl_selected_area = QLabel("Selected area: None")
 
         self.btn_select_area = QPushButton("Select an area")
-        self.btn_select_whole_screen = QPushButton("Select whole screen")
+        self.btn_select_whole_screen = QPushButton("Select a\nwhole screen")
 
         self.btn_select_area.clicked.connect(self.btn_onclick_select_area)
         self.btn_select_whole_screen.clicked.connect(self.btn_onclick_select_whole_screen)
 
-        layout.addWidget(self.lbl_selected_area)
-        layout.addWidget(self.btn_select_area)
-        layout.addWidget(self.btn_select_whole_screen)
+        self.setup_layout()
+
+    def setup_layout(self):
+        buttons_size = QSize(115, 35)
+        self.btn_select_area.setFixedSize(buttons_size)
+        self.btn_select_whole_screen.setFixedSize(buttons_size)
+
+        buttons_layout = QHBoxLayout()
+        buttons_layout.addWidget(self.btn_select_area)
+        buttons_layout.addWidget(self.btn_select_whole_screen)
+
+        layout = QVBoxLayout()
         layout.addWidget(self.lbl_whole_screen_notice)
+        layout.addWidget(self.lbl_selected_area)
+        layout.addLayout(buttons_layout)
 
         self.setLayout(layout)
 
@@ -72,3 +80,7 @@ class SelectionGroupbox(QGroupBox):
 
     def get_selection(self) -> Union[SelectedArea, SelectedScreen, None]:
         return self.selected_area or self.selected_screen
+
+    def set_buttons_enabled(self, enabled: bool):
+        self.btn_select_area.setEnabled(enabled)
+        self.btn_select_whole_screen.setEnabled(enabled)

@@ -154,7 +154,8 @@ class CuteRecorderQtApplication:
 
         # disable all buttons other than stop record
         self.btn_stop_recording.setEnabled(True)
-        self.config_area.disable_all_buttons()
+        self.btn_start_recording.setEnabled(False)
+        self.config_area.set_buttons_enabled(False)
 
         # launch wf-recorder
         self.recorder_proc = start_recording(
@@ -165,8 +166,8 @@ class CuteRecorderQtApplication:
 
     def btn_onclick_stop_recording(self):
         self.btn_stop_recording.setEnabled(False)
-        self.config_area.enable_all_buttons()
         self.btn_start_recording.setEnabled(True)
+        self.config_area.set_buttons_enabled(True)
 
         if self.recorder_proc:
             self.recorder_proc.send_signal(signal.SIGINT)
