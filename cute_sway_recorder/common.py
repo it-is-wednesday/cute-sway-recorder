@@ -3,7 +3,10 @@ import re
 import subprocess
 from typing import List
 
+from PySide6.QtCore import QSize
+
 PATTERN_SELECTED_AREA = re.compile(r"\d+,\d+ \d+x\d+")
+CONFIG_BUTTON_WIDTH = 130
 
 
 def available_screens() -> List[str]:
@@ -20,6 +23,7 @@ class SelectedScreen(str):
     Textual representation of one of your monitors. Raises ValueError if instantiated with a string
     which isn't one of the monitors. List of monitors is decided by `available_screens()`.
     """
+
     def __init__(self, s):
         screens = available_screens()
         if s not in screens:

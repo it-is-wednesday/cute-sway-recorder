@@ -1,9 +1,9 @@
 import subprocess
 from typing import Optional, Union
-from PySide6.QtCore import QSize
+
 from PySide6.QtWidgets import QGroupBox, QHBoxLayout, QLabel, QPushButton, QVBoxLayout
 
-from common import SelectedArea, SelectedScreen, available_screens
+from common import CONFIG_BUTTON_WIDTH, SelectedArea, SelectedScreen, available_screens
 from screen_selection import ScreenSelectionDialog
 
 
@@ -21,13 +21,13 @@ def select_area() -> Optional[SelectedArea]:
     return None
 
 
-class SelectionGroupbox(QGroupBox):
+class SelectionGroupbox(QVBoxLayout):
     def __init__(self, window):
         super().__init__()
         self.window = window
 
         self.lbl_whole_screen_notice = QLabel(
-            '<font color="salmon">This window will be minimized. <br/>'
+            '<font color="orangered">This window will be minimized. <br/>'
             "Click the tray icon to stop recording</font>"
         )
         self.lbl_whole_screen_notice.hide()
@@ -35,10 +35,12 @@ class SelectionGroupbox(QGroupBox):
         self.selected_screen: Optional[SelectedScreen] = None
         self.selected_area = None
 
-        self.lbl_selected_area = QLabel("Selected area: None")
+        self.lbl_selected_area = QLabel("No area selected yet")
 
-        self.btn_select_area = QPushButton("Select an area")
-        self.btn_select_whole_screen = QPushButton("Select a\nwhole screen")
+        self.btn_select_area = QPushButton("Select area")
+        self.btn_select_whole_screen = QPushButton(
+            "Select screen" if len(available_screens()) > 1 else "Whole screen"
+        )
 
         self.btn_select_area.clicked.connect(self.btn_onclick_select_area)
         self.btn_select_whole_screen.clicked.connect(self.btn_onclick_select_whole_screen)
@@ -46,20 +48,16 @@ class SelectionGroupbox(QGroupBox):
         self.setup_layout()
 
     def setup_layout(self):
-        buttons_size = QSize(115, 35)
-        self.btn_select_area.setFixedSize(buttons_size)
-        self.btn_select_whole_screen.setFixedSize(buttons_size)
+        self.btn_select_area.setFixedWidth(CONFIG_BUTTON_WIDTH)
+        self.btn_select_whole_screen.setFixedWidth(CONFIG_BUTTON_WIDTH)
 
-        buttons_layout = QHBoxLayout()
-        buttons_layout.addWidget(self.btn_select_area)
-        buttons_layout.addWidget(self.btn_select_whole_screen)
+        bottom_layout = QHBoxLayout()
 
-        layout = QVBoxLayout()
-        layout.addWidget(self.lbl_whole_screen_notice)
-        layout.addWidget(self.lbl_selected_area)
-        layout.addLayout(buttons_layout)
-
-        self.setLayout(layout)
+        self.addWidget(self.lbl_whole_screen_notice)
+        bottom_layout.addWidget(self.lbl_selected_area)
+        bottom_layout.addWidget(self.btn_select_area)
+        bottom_layout.addWidget(self.btn_select_whole_screen)
+        self.addLayout(bottom_layout)
 
     def btn_onclick_select_area(self):
         self.selected_area = select_area() or self.selected_area

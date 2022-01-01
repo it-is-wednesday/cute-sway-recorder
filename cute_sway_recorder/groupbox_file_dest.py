@@ -6,6 +6,8 @@ from PySide6.QtCore import QSize
 
 from PySide6.QtWidgets import QFileDialog, QGroupBox, QHBoxLayout, QLabel, QPushButton, QVBoxLayout
 
+from common import CONFIG_BUTTON_WIDTH
+
 PATTERN_FILE_WITH_SUFFIX = re.compile(r".*\..*")
 
 
@@ -29,7 +31,7 @@ def make_default_file_dest() -> Path:
     return Path(pathstr).expanduser().absolute()
 
 
-class FileDestGroupbox(QGroupBox):
+class FileDestGroupbox(QHBoxLayout):
     def __init__(self, window):
         super().__init__()
         self.window = window
@@ -39,7 +41,7 @@ class FileDestGroupbox(QGroupBox):
         self.lbl_file_dst = QLabel()
         self.update_file_dest_label()
 
-        self.btn_pick_dest = QPushButton("Pick file\ndestination")
+        self.btn_pick_dest = QPushButton("Pick path")
         self.btn_generate_random_dest = QPushButton("Random name")
 
         self.btn_pick_dest.clicked.connect(self.btn_onclick_pick_dst)
@@ -48,19 +50,12 @@ class FileDestGroupbox(QGroupBox):
         self.setup_layout()
 
     def setup_layout(self):
-        buttons_size = QSize(115, 35)
-        self.btn_pick_dest.setFixedSize(buttons_size)
-        self.btn_generate_random_dest.setFixedSize(buttons_size)
+        self.btn_generate_random_dest.setFixedWidth(CONFIG_BUTTON_WIDTH)
+        self.btn_pick_dest.setFixedWidth(CONFIG_BUTTON_WIDTH)
 
-        buttons_layout = QHBoxLayout()
-        buttons_layout.addWidget(self.btn_pick_dest)
-        buttons_layout.addWidget(self.btn_generate_random_dest)
-
-        layout = QVBoxLayout()
-        layout.addWidget(self.lbl_file_dst)
-        layout.addLayout(buttons_layout)
-
-        self.setLayout(layout)
+        self.addWidget(self.lbl_file_dst)
+        self.addWidget(self.btn_pick_dest)
+        self.addWidget(self.btn_generate_random_dest)
 
     def btn_onclick_pick_dst(self):
         dest: str = QFileDialog.getSaveFileName(parent=self.window)[0]
@@ -73,7 +68,7 @@ class FileDestGroupbox(QGroupBox):
         self.update_file_dest_label()
 
     def update_file_dest_label(self):
-        self.lbl_file_dst.setText(f"Saving as: {shrink_home(str(self.file_dest))}")
+        self.lbl_file_dst.setText(f"{shrink_home(str(self.file_dest))}")
 
     def btn_onclick_generate_random_dest(self):
         self.file_dest = make_default_file_dest()
