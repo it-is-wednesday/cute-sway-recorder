@@ -69,11 +69,14 @@ class SelectionGroupbox(QVBoxLayout):
         screens = available_screens()
         if len(screens) > 1:
             selected_screen_idx = ScreenSelectionDialog(screens, parent=self.window).exec()
+            # -1 means the user hit escape on the dialog, didn't choose anything
             if selected_screen_idx == -1:
                 return
             self.selected_screen = SelectedScreen(screens[selected_screen_idx])
+            self.lbl_selected_area.setText(f"Selected screen: {self.selected_screen}")
+        else:
+            self.lbl_selected_area.setText(f"Selected whole screen")
         self.selected_area = None
-        self.lbl_selected_area.setText(f"Selected screen: {self.selected_screen}")
         self.lbl_whole_screen_notice.show()
 
     def get_selection(self) -> Union[SelectedArea, SelectedScreen, None]:

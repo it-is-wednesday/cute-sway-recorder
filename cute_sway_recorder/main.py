@@ -153,6 +153,18 @@ class CuteRecorderQtApplication(QMainWindow):
         if not self.config:
             return
 
+        if self.config.file_dest.exists():
+            resp = QMessageBox.question(
+                self,
+                "File exists",
+                f"Override {self.config.file_dest}?",
+                QMessageBox.Yes,
+                QMessageBox.No,
+            )
+            if resp == QMessageBox.No:
+                self.lbl_status.setText(STATUS_NOT_RECORDING)
+                return
+
         # disable all buttons other than stop record
         self.btn_stop_recording.setEnabled(True)
         self.btn_start_recording.setEnabled(False)
@@ -172,19 +184,6 @@ class CuteRecorderQtApplication(QMainWindow):
         conf = self.config
 
         self.lbl_status.setText(STATUS_RECORDING)
-
-        # confirm dest file override
-        if conf.file_dest.exists():
-            resp = QMessageBox.question(
-                self,
-                "File exists",
-                f"Override {conf.file_dest}?",
-                QMessageBox.Yes,
-                QMessageBox.No,
-            )
-            if resp == QMessageBox.No:
-                self.lbl_status.setText(STATUS_NOT_RECORDING)
-                return
 
         # show tray icon if recording whole screen
         if isinstance(conf.selection, SelectedScreen):
