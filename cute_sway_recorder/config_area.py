@@ -69,3 +69,5 @@ class ConfigArea(QVBoxLayout):
     def set_buttons_enabled(self, enabled: bool):
         self.selection_box.set_buttons_enabled(enabled)
         self.file_dest_box.set_buttons_enabled(enabled)
+        self.delay_spinbox.setEnabled(enabled)
+        self.checkbox_use_audio.setEnabled(enabled)
