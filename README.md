@@ -18,3 +18,9 @@ You might prefer using [pipx](https://pypa.github.io/pipx/):
 ``` shell
 pipx install cute-sway-recorder
 ```
+
+## Alternatives
+[green-recorder](https://github.com/dvershinin/green-recorder) is a recent fork of the [project
+abandoned in 2019](https://github.com/mhsabbagh/green-recorder). It doesn't use `wf-recorder` under
+the hood. It currently has more features than this project; you might want to try it first, and
+come back here if it gives you a hard time.
