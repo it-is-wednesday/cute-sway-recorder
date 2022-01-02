@@ -2,6 +2,9 @@ from PySide6.QtWidgets import QDialog, QHBoxLayout, QPushButton
 
 
 class ScreenSelectionDialog(QDialog):
+    """
+    Popup dialog for choosing a monitor to record.
+    """
     def __init__(self, available_screens, parent=None):
         super().__init__(parent)
         layout = QHBoxLayout()

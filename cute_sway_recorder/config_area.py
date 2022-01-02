@@ -6,8 +6,8 @@ from PySide6 import QtCore
 from PySide6.QtWidgets import QCheckBox, QHBoxLayout, QLabel, QMessageBox, QSpinBox, QStyle, QVBoxLayout
 
 from common import SelectedArea, SelectedScreen
-from groupbox_file_dest import FileDestGroupbox
-from groupbox_selection import SelectionGroupbox
+from group_file_dest import FileDestGroup
+from group_selection import SelectionGroup
 
 
 @dataclass
@@ -23,8 +23,8 @@ class ConfigArea(QVBoxLayout):
         super().__init__()
         self.window = window
 
-        self.selection_box = SelectionGroupbox(window)
-        self.file_dest_box = FileDestGroupbox(window)
+        self.selection_box = SelectionGroup(window)
+        self.file_dest_box = FileDestGroup(window)
 
         self.checkbox_use_audio = QCheckBox("Record audio")
         self.delay_spinbox = QSpinBox()

@@ -1,10 +1,10 @@
 import subprocess
 from typing import Optional, Union
 
-from PySide6.QtWidgets import QGroupBox, QHBoxLayout, QLabel, QPushButton, QVBoxLayout
+from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QVBoxLayout
 
 from common import CONFIG_BUTTON_WIDTH, SelectedArea, SelectedScreen, available_screens
-from screen_selection import ScreenSelectionDialog
+from select_screen import ScreenSelectionDialog
 
 
 def select_area() -> Optional[SelectedArea]:
@@ -21,7 +21,7 @@ def select_area() -> Optional[SelectedArea]:
     return None
 
 
-class SelectionGroupbox(QVBoxLayout):
+class SelectionGroup(QVBoxLayout):
     def __init__(self, window):
         super().__init__()
         self.window = window

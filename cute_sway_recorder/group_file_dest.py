@@ -31,7 +31,7 @@ def make_default_file_dest() -> Path:
     return Path(pathstr).expanduser().absolute()
 
 
-class FileDestGroupbox(QHBoxLayout):
+class FileDestGroup(QHBoxLayout):
     def __init__(self, window):
         super().__init__()
         self.window = window
