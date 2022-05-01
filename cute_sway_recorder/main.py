@@ -23,8 +23,8 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from common import SelectedArea, SelectedScreen
-from config_area import ConfigArea
+from .common import SelectedArea, SelectedScreen
+from .config_area import ConfigArea
 
 STATUS_DELAY = '<font color="indianred">Starting in {}...</font>'
 STATUS_RECORDING = '<font color="Red">RECORDING</font>'

@@ -6,7 +6,7 @@ from PySide6.QtCore import QSize
 
 from PySide6.QtWidgets import QFileDialog, QGroupBox, QHBoxLayout, QLabel, QPushButton, QVBoxLayout
 
-from common import CONFIG_BUTTON_WIDTH
+from .common import CONFIG_BUTTON_WIDTH
 
 PATTERN_FILE_WITH_SUFFIX = re.compile(r".*\..*")
 

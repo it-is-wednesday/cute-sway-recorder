@@ -3,8 +3,8 @@ from typing import Optional, Union
 
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QVBoxLayout
 
-from common import CONFIG_BUTTON_WIDTH, SelectedArea, SelectedScreen, available_screens
-from select_screen import ScreenSelectionDialog
+from .common import CONFIG_BUTTON_WIDTH, SelectedArea, SelectedScreen, available_screens
+from .select_screen import ScreenSelectionDialog
 
 
 def select_area() -> Optional[SelectedArea]:

@@ -5,9 +5,9 @@ from PySide6 import QtCore
 
 from PySide6.QtWidgets import QCheckBox, QHBoxLayout, QLabel, QMessageBox, QSpinBox, QStyle, QVBoxLayout
 
-from common import SelectedArea, SelectedScreen
-from group_file_dest import FileDestGroup
-from group_selection import SelectionGroup
+from .common import SelectedArea, SelectedScreen
+from .group_file_dest import FileDestGroup
+from .group_selection import SelectionGroup
 
 
 @dataclass
