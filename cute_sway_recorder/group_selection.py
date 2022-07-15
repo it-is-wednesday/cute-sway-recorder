@@ -75,7 +75,8 @@ class SelectionGroup(QVBoxLayout):
             self.selected_screen = SelectedScreen(screens[selected_screen_idx])
             self.lbl_selected_area.setText(f"Selected screen: {self.selected_screen}")
         else:
-            self.lbl_selected_area.setText(f"Selected whole screen")
+            self.selected_screen = SelectedScreen(screens[0])
+            self.lbl_selected_area.setText("Selected the whole screen")
         self.selected_area = None
         self.lbl_whole_screen_notice.show()
 
