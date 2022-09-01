@@ -35,6 +35,7 @@ STOP_RECORDING = "Stop recording"
 def wf_recorder(
     selection: Union[SelectedArea, SelectedScreen],
     file_dst,
+    flags,
     include_audio: bool = False,
 ) -> subprocess.Popen:
     """
@@ -54,6 +55,7 @@ def wf_recorder(
     if isinstance(selection, SelectedScreen):
         params.append("--output")
         params.append(selection)
+    params.append(flags.strip())
     return subprocess.Popen(params)
 
 
@@ -194,6 +196,7 @@ class CuteRecorderQtApplication(QMainWindow):
         self.recorder_proc = wf_recorder(
             conf.selection,
             conf.file_dest,
+            conf.flags,
             include_audio=conf.include_audio,
         )
 
