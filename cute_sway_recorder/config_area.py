@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Optional, Union
 from PySide6 import QtCore
 
-from PySide6.QtWidgets import QCheckBox, QHBoxLayout, QLabel, QMessageBox, QSpinBox, QStyle, QVBoxLayout
+from PySide6.QtWidgets import QCheckBox, QHBoxLayout, QLabel, QMessageBox, QSpinBox, QStyle, QVBoxLayout, QLineEdit
 
 from .common import SelectedArea, SelectedScreen
 from .group_file_dest import FileDestGroup
@@ -16,6 +16,7 @@ class Config:
     file_dest: Path
     include_audio: bool
     delay: int
+    flags: str
 
 
 class ConfigArea(QVBoxLayout):
@@ -28,6 +29,7 @@ class ConfigArea(QVBoxLayout):
 
         self.checkbox_use_audio = QCheckBox("Record audio")
         self.delay_spinbox = QSpinBox()
+        self.flags = QLineEdit()
 
         self.setup_layout()
 
@@ -41,6 +43,11 @@ class ConfigArea(QVBoxLayout):
         bottom.addWidget(self.checkbox_use_audio)
         bottom.addStretch()
         self.addLayout(bottom)
+
+        flags = QHBoxLayout()
+        flags.addWidget(QLabel("Flags:"))
+        flags.addWidget(self.flags)
+        self.addLayout(flags)
 
     def create_config(self) -> Optional[Config]:
         """
@@ -63,7 +70,8 @@ class ConfigArea(QVBoxLayout):
             selection,
             self.file_dest_box.file_dest,
             self.checkbox_use_audio.isChecked(),
-            self.delay_spinbox.value()
+            self.delay_spinbox.value(),
+            self.flags.text()
         )
 
     def set_buttons_enabled(self, enabled: bool):

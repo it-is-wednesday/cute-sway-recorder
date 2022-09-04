@@ -35,6 +35,7 @@ STOP_RECORDING = "Stop recording"
 def wf_recorder(
     selection: Union[SelectedArea, SelectedScreen],
     file_dst,
+    flags,
     include_audio: bool = False,
 ) -> subprocess.Popen:
     """
@@ -42,8 +43,11 @@ def wf_recorder(
     of a screen or a whole screen.
 
     Saves the recording to file_dst, which is a path-like object.
+    Append user submitted flags to the end of params
+    Note: user can't enter parameters with spaces, e.g., --audio device1 device2
     """
     Path(file_dst).parent.mkdir(parents=True, exist_ok=True)
+    flags = flags.strip().split()
 
     params = ["wf-recorder", "-f", file_dst]
     if include_audio:
@@ -54,6 +58,7 @@ def wf_recorder(
     if isinstance(selection, SelectedScreen):
         params.append("--output")
         params.append(selection)
+    params.extend(flags) # adds all items of flags to the end of params
     return subprocess.Popen(params)
 
 
@@ -194,6 +199,7 @@ class CuteRecorderQtApplication(QMainWindow):
         self.recorder_proc = wf_recorder(
             conf.selection,
             conf.file_dest,
+            conf.flags,
             include_audio=conf.include_audio,
         )
 
