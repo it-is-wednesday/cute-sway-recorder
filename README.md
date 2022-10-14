@@ -1,6 +1,6 @@
 # Cute Sway Recorder
 
-Screen recorder for [`wlroots`](https://github.com/swaywm/wlroots)-based window managers, mainly Sway
+Screen recorder for [`wlroots`](https://gitlab.freedesktop.org/wlroots/wlroots/)-based window managers, mainly Sway
 
 More specifically, this project is merely a graphical [Qt](https://www.qt.io/) wrapper for
 [`wf-recorder`](https://github.com/ammen99/wf-recorder), leveraging
