@@ -4,7 +4,7 @@ version = "6.2.2.1"
 description = "Python bindings for the Qt cross-platform application and UI framework"
 category = "main"
 optional = false
-python-versions = ">=3.6, <3.11"
+python-versions = ">=3.6, <3.12"
 
 [package.dependencies]
 shiboken6 = "6.2.2.1"
@@ -15,11 +15,11 @@ version = "6.2.2.1"
 description = "Python / C++ bindings helper module"
 category = "main"
 optional = false
-python-versions = ">=3.6, <3.11"
+python-versions = ">=3.6, <3.12"
 
 [metadata]
 lock-version = "1.1"
-python-versions = ">=3.6,<3.11" # PySide6 requirements
+python-versions = ">=3.6,<3.12" # PySide6 requirements
 content-hash = "7b43b1db09a55125f973c4b9f91e6d528d94259f5babe2b4dc53c577e6b9ac3f"
 
 [metadata.files]
