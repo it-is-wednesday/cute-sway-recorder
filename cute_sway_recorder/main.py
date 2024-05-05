@@ -77,26 +77,26 @@ class CuteRecorderQtApplication(QMainWindow):
         self.setWindowTitle("Cute Sway Recorder")
         self.config_area = ConfigArea(self)
 
-        ## Create labels
+        # Create labels
         self.lbl_status = QLabel("Not recording")
 
-        ## Create buttons
+        # Create buttons
         self.btn_start_recording = QPushButton("Start recording")
         self.btn_stop_recording = QPushButton(STOP_RECORDING)
 
-        ## Connect buttons on-click actions
+        # Connect buttons on-click actions
         self.btn_start_recording.clicked.connect(self.btn_onclick_start_recording)
         self.btn_stop_recording.clicked.connect(self.btn_onclick_stop_recording)
         self.btn_stop_recording.setEnabled(False)
 
-        ## Verify executable dependencies
+        # Verify executable dependencies
         self.cmd_available_or_exit("wf-recorder")
         self.cmd_available_or_exit("slurp")
 
-        ## Setup layout
+        # Setup layout
         self.setup_layout()
 
-        ## Define whole-screen icon (not showing yet)
+        # Define whole-screen icon (not showing yet)
         self.icon = QSystemTrayIcon(self)
         self.icon.setIcon(self.style().standardIcon(QStyle.SP_MediaStop))
         self.icon.activated.connect(self.tray_icon_activated_handler)
@@ -219,9 +219,6 @@ class CuteRecorderQtApplication(QMainWindow):
 
 
 def main():
-    subprocess.run(
-        ["swaymsg", 'for_window [app_id="cute-sway-recorder"] floating enable']
-    )
     app = QApplication(sys.argv)
     app.setApplicationDisplayName("Cute Sway Recorder")
     app.setDesktopFileName("cute-sway-recorder")
