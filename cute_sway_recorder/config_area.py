@@ -3,7 +3,16 @@ from pathlib import Path
 from typing import Optional, Union
 from PySide6 import QtCore
 
-from PySide6.QtWidgets import QCheckBox, QHBoxLayout, QLabel, QMessageBox, QSpinBox, QStyle, QVBoxLayout, QLineEdit
+from PySide6.QtWidgets import (
+    QCheckBox,
+    QHBoxLayout,
+    QLabel,
+    QMessageBox,
+    QSpinBox,
+    QStyle,
+    QVBoxLayout,
+    QLineEdit,
+)
 
 from .common import SelectedArea, SelectedScreen
 from .group_file_dest import FileDestGroup
@@ -71,7 +80,7 @@ class ConfigArea(QVBoxLayout):
             self.file_dest_box.file_dest,
             self.checkbox_use_audio.isChecked(),
             self.delay_spinbox.value(),
-            self.flags.text()
+            self.flags.text(),
         )
 
     def set_buttons_enabled(self, enabled: bool):

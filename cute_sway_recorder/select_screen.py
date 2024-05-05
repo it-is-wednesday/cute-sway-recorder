@@ -5,6 +5,7 @@ class ScreenSelectionDialog(QDialog):
     """
     Popup dialog for choosing a monitor to record.
     """
+
     def __init__(self, available_screens, parent=None):
         super().__init__(parent)
         layout = QHBoxLayout()
@@ -22,8 +23,10 @@ class ScreenSelectionDialog(QDialog):
         Creates a function to be executed on button click. The function makes the dialog quit and
         return int_to_return to its parent (assuming the dialog was ran with .exec())
         """
+
         def new_func():
             self.done(int_to_return)
+
         return new_func
 
     def reject(self) -> None:

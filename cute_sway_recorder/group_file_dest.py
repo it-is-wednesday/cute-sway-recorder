@@ -4,7 +4,14 @@ import string
 from pathlib import Path
 from PySide6.QtCore import QSize
 
-from PySide6.QtWidgets import QFileDialog, QGroupBox, QHBoxLayout, QLabel, QPushButton, QVBoxLayout
+from PySide6.QtWidgets import (
+    QFileDialog,
+    QGroupBox,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QVBoxLayout,
+)
 
 from .common import CONFIG_BUTTON_WIDTH
 
@@ -45,7 +52,9 @@ class FileDestGroup(QHBoxLayout):
         self.btn_generate_random_dest = QPushButton("Random name")
 
         self.btn_pick_dest.clicked.connect(self.btn_onclick_pick_dst)
-        self.btn_generate_random_dest.clicked.connect(self.btn_onclick_generate_random_dest)
+        self.btn_generate_random_dest.clicked.connect(
+            self.btn_onclick_generate_random_dest
+        )
 
         self.setup_layout()
 
