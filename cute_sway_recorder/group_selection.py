@@ -3,13 +3,19 @@ from typing import Optional, Union
 
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QVBoxLayout
 
-from .common import CONFIG_BUTTON_WIDTH, SelectedArea, SelectedScreen, available_screens
+from .common import (
+    CONFIG_BUTTON_WIDTH,
+    SelectedArea,
+    SelectedScreen,
+    get_available_screens,
+    detect_compositor,
+)
 from .select_screen import ScreenSelectionDialog
 
 
 def select_area() -> Optional[SelectedArea]:
     """
-    Launch slurp to capture a region of the screen, returns its output in the following format:
+    Launch slurp to capture a region of the screen, and returns its output in the following format:
     <x>,<y> <width>x<height>
 
     If slurp is cancelled (by hitting escape), returns None
@@ -39,7 +45,9 @@ class SelectionGroup(QVBoxLayout):
 
         self.btn_select_area = QPushButton("Select area")
         self.btn_select_whole_screen = QPushButton(
-            "Select screen" if len(available_screens()) > 1 else "Whole screen"
+            "Select screen"
+            if len(get_available_screens(detect_compositor())) > 1
+            else "Whole screen"
         )
 
         self.btn_select_area.clicked.connect(self.btn_onclick_select_area)
@@ -68,7 +76,7 @@ class SelectionGroup(QVBoxLayout):
         self.lbl_whole_screen_notice.hide()
 
     def btn_onclick_select_whole_screen(self):
-        screens = available_screens()
+        screens = get_available_screens(detect_compositor())
         if len(screens) > 1:
             selected_screen_idx = ScreenSelectionDialog(
                 screens, parent=self.window
