@@ -7,8 +7,7 @@ from pathlib import Path
 from subprocess import DEVNULL
 from typing import Union
 
-from PySide6.QtCore import QParallelAnimationGroup, QTimer, Qt
-from PySide6.QtGui import QPalette
+from PySide6.QtCore import QTimer, Qt
 from PySide6.QtWidgets import (
     QApplication,
     QGroupBox,

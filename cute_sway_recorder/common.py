@@ -3,7 +3,6 @@ import re
 import subprocess
 from typing import List
 
-from PySide6.QtCore import QSize
 
 PATTERN_SELECTED_AREA = re.compile(r"\d+,\d+ \d+x\d+")
 CONFIG_BUTTON_WIDTH = 130

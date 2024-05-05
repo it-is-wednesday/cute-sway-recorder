@@ -2,15 +2,12 @@ import random
 import re
 import string
 from pathlib import Path
-from PySide6.QtCore import QSize
 
 from PySide6.QtWidgets import (
     QFileDialog,
-    QGroupBox,
     QHBoxLayout,
     QLabel,
     QPushButton,
-    QVBoxLayout,
 )
 
 from .common import CONFIG_BUTTON_WIDTH

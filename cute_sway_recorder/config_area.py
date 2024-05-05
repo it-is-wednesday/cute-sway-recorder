@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional, Union
-from PySide6 import QtCore
 
 from PySide6.QtWidgets import (
     QCheckBox,
@@ -9,7 +8,6 @@ from PySide6.QtWidgets import (
     QLabel,
     QMessageBox,
     QSpinBox,
-    QStyle,
     QVBoxLayout,
     QLineEdit,
 )
