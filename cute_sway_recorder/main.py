@@ -7,8 +7,7 @@ from pathlib import Path
 from subprocess import DEVNULL
 from typing import Union
 
-from PySide6.QtCore import QParallelAnimationGroup, QTimer, Qt
-from PySide6.QtGui import QPalette
+from PySide6.QtCore import QTimer, Qt
 from PySide6.QtWidgets import (
     QApplication,
     QGroupBox,
@@ -58,7 +57,7 @@ def wf_recorder(
     if isinstance(selection, SelectedScreen):
         params.append("--output")
         params.append(selection)
-    params.extend(flags) # adds all items of flags to the end of params
+    params.extend(flags)  # adds all items of flags to the end of params
     return subprocess.Popen(params)
 
 
@@ -220,7 +219,9 @@ class CuteRecorderQtApplication(QMainWindow):
 
 
 def main():
-    subprocess.run(["swaymsg", 'for_window [app_id="cute-sway-recorder"] floating enable'])
+    subprocess.run(
+        ["swaymsg", 'for_window [app_id="cute-sway-recorder"] floating enable']
+    )
     app = QApplication(sys.argv)
     app.setApplicationDisplayName("Cute Sway Recorder")
     app.setDesktopFileName("cute-sway-recorder")

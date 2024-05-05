@@ -43,7 +43,9 @@ class SelectionGroup(QVBoxLayout):
         )
 
         self.btn_select_area.clicked.connect(self.btn_onclick_select_area)
-        self.btn_select_whole_screen.clicked.connect(self.btn_onclick_select_whole_screen)
+        self.btn_select_whole_screen.clicked.connect(
+            self.btn_onclick_select_whole_screen
+        )
 
         self.setup_layout()
 
@@ -68,7 +70,9 @@ class SelectionGroup(QVBoxLayout):
     def btn_onclick_select_whole_screen(self):
         screens = available_screens()
         if len(screens) > 1:
-            selected_screen_idx = ScreenSelectionDialog(screens, parent=self.window).exec()
+            selected_screen_idx = ScreenSelectionDialog(
+                screens, parent=self.window
+            ).exec()
             # -1 means the user hit escape on the dialog, didn't choose anything
             if selected_screen_idx == -1:
                 return
