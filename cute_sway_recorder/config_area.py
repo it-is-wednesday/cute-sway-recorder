@@ -12,6 +12,7 @@ from PySide6.QtWidgets import (
     QLineEdit,
 )
 
+from .config_file import ConfigFile
 from .common import SelectedArea, SelectedScreen
 from .group_file_dest import FileDestGroup
 from .group_selection import SelectionGroup
@@ -31,14 +32,22 @@ class ConfigArea(QVBoxLayout):
         super().__init__()
         self.window = window
 
+        config_file = ConfigFile.parse()
+
         self.selection_box = SelectionGroup(window)
-        self.file_dest_box = FileDestGroup(window)
+        self.file_dest_box = FileDestGroup(window, config_file)
 
         self.checkbox_use_audio = QCheckBox("Record audio")
         self.delay_spinbox = QSpinBox()
         self.flags = QLineEdit()
 
+        self.set_defaults(config_file)
         self.setup_layout()
+
+    def set_defaults(self, config_file: ConfigFile):
+        self.checkbox_use_audio.setChecked(config_file.include_audio)
+        self.delay_spinbox.setValue(config_file.delay)
+        self.flags.setText(config_file.flags)
 
     def setup_layout(self):
         self.addLayout(self.selection_box)

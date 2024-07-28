@@ -2,6 +2,7 @@ import random
 import re
 import string
 from pathlib import Path
+from typing import Optional
 
 from PySide6.QtWidgets import (
     QFileDialog,
@@ -10,6 +11,7 @@ from PySide6.QtWidgets import (
     QPushButton,
 )
 
+from .config_area import ConfigFile
 from .common import CONFIG_BUTTON_WIDTH
 
 PATTERN_FILE_WITH_SUFFIX = re.compile(r".*\..*")
@@ -36,12 +38,11 @@ def make_default_file_dest() -> Path:
 
 
 class FileDestGroup(QHBoxLayout):
-    def __init__(self, window):
+    def __init__(self, window, config_file: ConfigFile):
         super().__init__()
         self.window = window
 
-        self.file_dest = make_default_file_dest()
-
+        self.file_dest = config_file.file_dest or make_default_file_dest()
         self.lbl_file_dst = QLabel()
         self.update_file_dest_label()
 
