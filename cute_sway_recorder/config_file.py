@@ -55,6 +55,8 @@ class ConfigFile:
             except configparser.ParsingError as e:
                 print_error(e)
                 return config_file
+        else:
+            return config_file
 
         config_file.flags = parser.get("DEFAULT", "flags", fallback="") 
 
