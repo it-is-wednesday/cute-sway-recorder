@@ -3,7 +3,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
-DEFAULT_CONFIG_PATH = Path.home() / ".config" / "cute-sway-recorder" / "defaults.conf"
+DEFAULT_CONFIG_PATH = Path.home() / ".config" / "cute-sway-recorder" / "config.ini"
+CONFIG_SECTION = "wf-recorder-defaults"
 
 def validate_file_dest(file_dest: Path):
     """
@@ -11,7 +12,7 @@ def validate_file_dest(file_dest: Path):
     is a valid destination.
     Namely
      - It is not a directory
-     - It's parent is an existing directory
+     - Its parent is an existing directory
     """
     if len(file_dest.name) == 0:
         raise ValueError(f"\"{file_dest}\" does not have a name.")
@@ -48,7 +49,6 @@ class ConfigFile:
         config_file = ConfigFile()
 
         parser = configparser.ConfigParser()
-
         if config_file_path.exists(): 
             try:
                 parser.read(config_file_path)
@@ -58,22 +58,22 @@ class ConfigFile:
         else:
             return config_file
 
-        config_file.flags = parser.get("DEFAULT", "flags", fallback="") 
+        config_file.flags = parser.get(CONFIG_SECTION, "flags", fallback="") 
 
         try:
-            config_file.include_audio = parser.getboolean("DEFAULT", "include_audio", fallback=False)
+            config_file.include_audio = parser.getboolean(CONFIG_SECTION, "include_audio", fallback=False)
         except ValueError as e:
             print_error(e, "include_audio")
 
         try:
-            delay = parser.getint("DEFAULT", "delay", fallback=0)
+            delay = parser.getint(CONFIG_SECTION, "delay", fallback=0)
             if delay < 0:
                 raise ValueError(f"expected nonnegative, got {delay}")
             config_file.delay = delay
         except ValueError as e:
             print_error(e, "delay")
 
-        file_dest_str = parser.get("DEFAULT", "file_dest", fallback=None)
+        file_dest_str = parser.get(CONFIG_SECTION, "file_dest", fallback=None)
         if file_dest_str is not None:
             try:
                 file_dest = Path(file_dest_str)
