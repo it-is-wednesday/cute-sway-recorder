@@ -9,6 +9,8 @@ More specifically, this project is merely a graphical [Qt](https://www.qt.io/) w
 
 ## Installation
 
+### Using pip
+
 ```shell
 pip install cute-sway-recorder
 ```
@@ -45,6 +47,14 @@ delay = 0
 flags = -c gif -r 10
 ```
 
+### Arch Linux
+
+For Arch Linux users, you can install the `cute-sway-recorder-git` package from the [AUR](https://aur.archlinux.org/packages/cute-sway-recorder-git) using an AUR helper like `paru`:
+
+```shell
+paru -S cute-sway-recorder-git
+```
+
 ## Contributing
 
 PRs are welcome!
@@ -66,4 +76,5 @@ poetry run python -m cute_sway_recorder.main
 ## Alternatives
 
 - [green-recorder](https://github.com/dvershinin/green-recorder) is a recent fork of the [project abandoned in 2019](https://github.com/mhsabbagh/green-recorder). It doesn't use `wf-recorder` under
-  the hood. It currently has more features than this project; you might want to try it first, and come back here if it gives you a hard time.
+    the hood. It currently has more features than this project; you might want to try it first, and come back here if it gives you a hard time.
+

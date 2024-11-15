@@ -25,6 +25,15 @@ def shrink_home(path: str) -> str:
     return path.replace(str(Path.home()), "~")
 
 
+def make_random_file_stem() -> str:
+    """
+    Create a default basename (no extension, no path) for default videos to be used by
+    make_default_file_dest and "Random Name"
+    Example result: cute-sbh42
+    """
+    identifier = "".join(random.choices(string.ascii_letters, k=5))
+    return f"cute-{identifier}"
+
 def make_default_file_dest() -> Path:
     """
     Create a sensible (as much as possible, you know) default name for videos that weren't given a
@@ -32,8 +41,8 @@ def make_default_file_dest() -> Path:
 
     Example result: /home/user/Videos/cute-NOwPn.mp4
     """
-    identifier = "".join(random.choices(string.ascii_letters, k=5))
-    pathstr = f"~/Videos/cute-{identifier}.mp4"
+    identifier = make_random_file_stem()
+    pathstr = f"~/Videos/{identifier}.mp4"
     return Path(pathstr).expanduser().absolute()
 
 
@@ -78,7 +87,16 @@ class FileDestGroup(QHBoxLayout):
         self.lbl_file_dst.setText(f"{shrink_home(str(self.file_dest))}")
 
     def btn_onclick_generate_random_dest(self):
-        self.file_dest = make_default_file_dest()
+        # try to just change the stem to a random stem
+        if self.file_dest.stem:
+            stem = make_random_file_stem()
+            suffix = self.file_dest.suffix or ".mp4"
+            # NOTE: if python version is >3.9, switch to Path.with_stem
+            self.file_dest = self.file_dest.with_name(stem).with_suffix(suffix)
+        else:
+            # this should never happen for a valid file_dest
+            # in this case, reset file dest to default
+            self.file_dest = make_default_file_dest()
         self.update_file_dest_label()
 
     def set_buttons_enabled(self, enabled: bool):
