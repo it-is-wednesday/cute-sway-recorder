@@ -9,6 +9,8 @@ More specifically, this project is merely a graphical [Qt](https://www.qt.io/) w
 
 ## Installation
 
+Do note that you will need to have [`wf-recorder`](https://github.com/ammen99/wf-recorder) and [`slurp`](https://github.com/emersion/slurp) accessible via `$PATH` =)
+
 ### Using pip
 
 ```shell
@@ -19,6 +21,14 @@ You might prefer using [pipx](https://pypa.github.io/pipx/):
 
 ```shell
 pipx install cute-sway-recorder
+```
+
+### Arch Linux
+
+For Arch Linux users, you can install the `cute-sway-recorder-git` package from the [AUR](https://aur.archlinux.org/packages/cute-sway-recorder-git) using an AUR helper like `paru`:
+
+```shell
+paru -S cute-sway-recorder-git
 ```
 
 ## Configuration
@@ -45,14 +55,6 @@ delay = 0
 # Additional flags to pass to wf-recorder
 # Type: string, default: ""
 flags = -c gif -r 10
-```
-
-### Arch Linux
-
-For Arch Linux users, you can install the `cute-sway-recorder-git` package from the [AUR](https://aur.archlinux.org/packages/cute-sway-recorder-git) using an AUR helper like `paru`:
-
-```shell
-paru -S cute-sway-recorder-git
 ```
 
 ## Contributing
