@@ -21,6 +21,32 @@ You might prefer using [pipx](https://pypa.github.io/pipx/):
 pipx install cute-sway-recorder
 ```
 
+## Configuration
+
+Default configuration is stored in the file `$HOME/.config/cute-sway-recorder/config.ini`
+in [ini](https://docs.python.org/3/library/configparser.html#supported-ini-file-structure) format.
+
+Here is an example configuration which saves recordings as gifs:
+
+```ini
+[wf-recorder-defaults]
+# Default file save location (location must exist)
+# Type: string, default: "~/Videos/cute-{id}.mp4"
+file_dest = ~/Gifs/gif.gif
+
+# Whether to include audio in recording
+# Type: bool, default: off
+include_audio = off
+
+# Delay before recording starts 
+# Type: integer, default: 0
+delay = 0
+
+# Additional flags to pass to wf-recorder
+# Type: string, default: ""
+flags = -c gif -r 10
+```
+
 ### Arch Linux
 
 For Arch Linux users, you can install the `cute-sway-recorder-git` package from the [AUR](https://aur.archlinux.org/packages/cute-sway-recorder-git) using an AUR helper like `paru`:
