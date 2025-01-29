@@ -4,8 +4,8 @@ Screen recorder for [`wlroots`](https://gitlab.freedesktop.org/wlroots/wlroots/)
 
 More specifically, this project is merely a graphical [Qt](https://www.qt.io/) wrapper for [`wf-recorder`](https://github.com/ammen99/wf-recorder), leveraging [`slurp`](https://github.com/emersion/slurp) for selecting screen regions.
 
-![](screenshots/recording.png)
-![](screenshots/done.png)
+![](assets/screenshots/recording.png)
+![](assets/screenshots/done.png)
 
 ## Installation
 
