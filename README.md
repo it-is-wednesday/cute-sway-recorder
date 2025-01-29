@@ -31,6 +31,26 @@ For Arch Linux users, you can install the `cute-sway-recorder-git` package from 
 paru -S cute-sway-recorder-git
 ```
 
+### Nix
+
+1. In your `flake.nix`, add the following input:
+
+```nix
+inputs = {
+  cute-sway-recorder.url = "github:it-is-wednesday/cute-sway-recorder";
+};
+```
+
+2. Add the package to your Home Manager configuration:
+
+```nix
+{ inputs, pkgs, ... }:
+
+{
+  home.packages = [ inputs.cute-sway-recorder.packages.${pkgs.system}.default ];
+}
+```
+
 ## Configuration
 
 Default configuration is stored in the file `$HOME/.config/cute-sway-recorder/config.ini`
@@ -48,7 +68,7 @@ file_dest = ~/Gifs/gif.gif
 # Type: bool, default: off
 include_audio = off
 
-# Delay before recording starts 
+# Delay before recording starts
 # Type: integer, default: 0
 delay = 0
 
