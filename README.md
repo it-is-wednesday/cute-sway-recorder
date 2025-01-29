@@ -42,7 +42,7 @@ Here is an example configuration which saves recordings as gifs:
 [wf-recorder-defaults]
 # Default file save location (location must exist)
 # Type: string, default: "~/Videos/cute-{id}.mp4"
-file_dest = ~/Gifs/gif.gif
+file_dest = "~/Gifs/gif.gif"
 
 # Whether to include audio in recording
 # Type: bool, default: off
