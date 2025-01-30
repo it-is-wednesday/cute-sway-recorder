@@ -1,6 +1,4 @@
-import random
 import re
-import string
 from pathlib import Path
 from typing import Optional
 
@@ -12,7 +10,7 @@ from PySide6.QtWidgets import (
 )
 
 from .config_area import ConfigFile
-from .common import CONFIG_BUTTON_WIDTH
+from .common import CONFIG_BUTTON_WIDTH, make_random_file_stem
 
 PATTERN_FILE_WITH_SUFFIX = re.compile(r".*\..*")
 
@@ -24,15 +22,6 @@ def shrink_home(path: str) -> str:
     """
     return path.replace(str(Path.home()), "~")
 
-
-def make_random_file_stem() -> str:
-    """
-    Create a default basename (no extension, no path) for default videos to be used by
-    make_default_file_dest and "Random Name"
-    Example result: cute-sbh42
-    """
-    identifier = "".join(random.choices(string.ascii_letters, k=5))
-    return f"cute-{identifier}"
 
 def make_default_file_dest() -> Path:
     """
