@@ -4,8 +4,8 @@ Screen recorder for [`wlroots`](https://gitlab.freedesktop.org/wlroots/wlroots/)
 
 More specifically, this project is merely a graphical [Qt](https://www.qt.io/) wrapper for [`wf-recorder`](https://github.com/ammen99/wf-recorder), leveraging [`slurp`](https://github.com/emersion/slurp) for selecting screen regions.
 
-![](screenshots/recording.png)
-![](screenshots/done.png)
+![](assets/screenshots/recording.png)
+![](assets/screenshots/done.png)
 
 ## Installation
 
@@ -31,6 +31,26 @@ For Arch Linux users, you can install the `cute-sway-recorder-git` package from 
 paru -S cute-sway-recorder-git
 ```
 
+### Nix
+
+1. In your `flake.nix`, add the following input:
+
+```nix
+inputs = {
+  cute-sway-recorder.url = "github:it-is-wednesday/cute-sway-recorder";
+};
+```
+
+2. Add the package to your Home Manager configuration:
+
+```nix
+{ inputs, pkgs, ... }:
+
+{
+  home.packages = [ inputs.cute-sway-recorder.packages.${pkgs.system}.default ];
+}
+```
+
 ## Configuration
 
 Default configuration is stored in the file `$HOME/.config/cute-sway-recorder/config.ini`
@@ -48,7 +68,7 @@ file_dest = ~/Gifs/gif.gif
 # Type: bool, default: off
 include_audio = off
 
-# Delay before recording starts 
+# Delay before recording starts
 # Type: integer, default: 0
 delay = 0
 
