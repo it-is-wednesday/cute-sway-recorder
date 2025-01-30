@@ -2,6 +2,7 @@ import configparser
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
+from .common import make_random_file_stem
 
 DEFAULT_CONFIG_PATH = Path.home() / ".config" / "cute-sway-recorder" / "config.ini"
 CONFIG_SECTION = "wf-recorder-defaults"
@@ -76,7 +77,12 @@ class ConfigFile:
         file_dest_str = parser.get(CONFIG_SECTION, "file_dest", fallback=None)
         if file_dest_str is not None:
             try:
-                file_dest = Path(file_dest_str)
+                if "{id}" in file_dest_str:
+                    replaced_str = file_dest_str.replace("{id}", make_random_file_stem())
+                    file_dest = Path(replaced_str)
+                else:
+                    file_dest = Path(file_dest_str)
+
                 validate_file_dest(file_dest)
                 config_file.file_dest = file_dest.expanduser().resolve()
             except ValueError as e:

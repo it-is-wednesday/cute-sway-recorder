@@ -1,8 +1,10 @@
+from typing import List, Optional
 import json
 import re
 import os
 import subprocess
-from typing import List, Optional
+import random
+import string
 
 
 PATTERN_SELECTED_AREA = re.compile(r"\d+,\d+ \d+x\d+")
@@ -111,3 +113,13 @@ class SelectedArea(str):
     def __init__(self, s):
         if not PATTERN_SELECTED_AREA.match(s):
             raise ValueError(f"Area '{s}' isn't of format: 'x,y width,height'")
+
+
+def make_random_file_stem() -> str:
+    """
+    Create a default basename (no extension, no path) for default videos to be used by
+    make_default_file_dest and "Random Name"
+    Example result: cute-sbh42
+    """
+    identifier = "".join(random.choices(string.ascii_letters, k=5))
+    return f"cute-{identifier}"
